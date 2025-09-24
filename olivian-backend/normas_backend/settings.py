@@ -18,6 +18,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -27,7 +28,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'gestao_normas',
     'rest_framework_simplejwt',
-    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -135,3 +135,5 @@ CORS_ALLOWED_ORIGINS = [
 
 # Configurações de e-mail para desenvolvimento
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+CORS_ALLOW_ALL_ORIGINS = True

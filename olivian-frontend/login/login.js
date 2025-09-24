@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 localStorage.setItem('refreshToken', data.refresh);
                 
                 // Redireciona imediatamente após o sucesso
-                window.location.href = '/acervo_tecnico/acervo_tecnico.html';
+                window.location.href = '/olivian-frontend/acervo_tecnico/acervo_tecnico.html';
             } else {
                 const errorData = await response.json();
                 // Mostra o popup de erro
