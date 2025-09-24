@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Configurações</title>
+
+    <link rel="stylesheet" href="configuracoes.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"/>
+</head>
+
+<body>
+
+    <div class="main-container">
+
+        <aside class="sidebar">
+
+            <div class="sidebar-header">
+                <img src="../Imagens/olivian_logo_colorido.png" alt="Logo Olivian" class="sidebar-logo">
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item">
+                        <a href="/acervo_tecnico/acervo_tecnico.html"> <img src="../Imagens/acervo.png" alt="Ícone Acervo" class="nav-icon">
+                            Acervo Técnico
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#">
+                            <img src="../Imagens/relatorio.png" alt="Ícone Relatórios" class="nav-icon">
+                            Relatórios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#">
+                            <img src="../Imagens/dashboard.png" alt="Ícone Dashboard" class="nav-icon">
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/glossario/glossario.html">
+                            <img src="../Imagens/glossario-ativo.png" alt="Ícone Glossário" class="nav-icon">
+                            Glossário
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="configuracoes.html">
+                            <img src="../Imagens/configuracoes-ativo.png" alt="Ícone Configurações" class="nav-icon">
+                            Configurações
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/administrador/administrador.html">
+                            <img src="../Imagens/administrador.png" alt="Ícone Administrador" class="nav-icon">
+                            Administrador
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="../login/login.html">
+                            <img src="../Imagens/sair.png" alt="Ícone Sair" class="nav-icon">
+                            Sair
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <img src="../Imagens/bti_logo_colorido.png" alt="Logo BTI" class="footer-logo">
+            </div>
+        </aside> <div class="sidebar-divider"></div>
+
+        <main class="content-area">
+
+            <header class="content-header">
+                <div class="client-profile">
+                    <span id="client-name" class="client-profile-name">Itaú Unibanco</span>
+                    <span id="client-cnpj">514.467.698-79</span>
+                </div>
+                <div class="user-profile">
+                    <span id="user-name" class="user-profile-name">Olá, Nichollas Mathias!</span>
+                    <span id="user-email">nichollas.souza@itau-unibanco.com.br</span>
+                    <span id="user-date">13/11/2025 - 08:53</span>
+                </div>
+            </header>
+
+            <div class="dadosEmpresariais">
+                <h2>Configurações - Dados Empresariais</h2>
+
+                <div class="blocoDados">
+        <span class="tituloDados">Razão Social: </span>
+        <span id="empresa-razao-social">&nbsp;</span>
+    </div>
+    <div class="blocoDados">
+        <span class="tituloDados">CNPJ: </span>
+        <span id="empresa-cnpj">&nbsp;</span>
+    </div>
+    <div class="blocoDados_kit">
+        <span class="tituloDados">Endereço: </span>
+        <span id="empresa-endereco">&nbsp;</span>
+        <span class="tituloDados spaced-text">Bairro: </span>
+        <span id="empresa-bairro">&nbsp;</span>
+    </div>
+    <div class="blocoDados_kit">
+        <span class="tituloDados">Cidade: </span>
+        <span id="empresa-cidade">&nbsp;</span>
+        <span class="tituloDados spaced-text">Estado: </span>
+        <span id="empresa-estado">&nbsp;</span>
+    </div>
+    <div class="blocoDados_kit">
+        <span class="tituloDados">CEP: </span>
+        <span id="empresa-cep">&nbsp;</span>
+        <span class="tituloDados spaced-text">Telefone: </span>
+        <span id="empresa-telefone">&nbsp;</span>
+    </div>
+    <div class="blocoDados_kit">
+        <span class="tituloDados">Vigência Contratual</span>
+        <span class="tituloDados spaced-text">Início: </span>
+        <span id="empresa-vigencia-inicio">&nbsp;</span>
+        <span class="tituloDados spaced-text">Término: </span>
+        <span id="empresa-vigencia-fim">&nbsp;</span>
+    </div>
+                
+            
+            <div>
+                <div class="management-container">
+                <section class="management-section">
+                    <div class="management-header">
+                        <h3>Minhas Auditorias</h3>
+                        <button class="add-btn" id="add-auditoria-btn" title="Adicionar Auditoria">+</button>
+                    </div>
+                    <div class="item-list" id="lista-auditorias">
+                        </div>
+                </section>
+
+                <section class="management-section">
+                    <div class="management-header">
+                        <h3>Minhas Certificações</h3>
+                        <button class="add-btn" id="add-certificacao-btn" title="Adicionar Certificação">+</button>
+                    </div>
+                    <div class="item-list" id="lista-certificacoes">
+                        </div>
+                </section>
+
+                <section class="management-section">
+                    <div class="management-header">
+                        <h3>Meus Centros de Custos</h3>
+                        <button class="add-btn" id="add-centro-custo-btn" title="Adicionar Centro de Custo">+</button>
+                    </div>
+                    <div class="item-list" id="lista-centros-de-custos">
+                        </div>
+                </section>
+            </div>
+            </div>
+
+            </main>
+
+<div id="modal-auditoria" class="modal-overlay">
+        <div class="modal-content-large">
+            <button class="close-button">&times;</button>
+            <div class="modal-grid">
+                <div class="modal-col-list">
+                    <h2>Auditorias Existentes</h2>
+                    <div id="lista-auditorias-popup" class="popup-item-list">
+                        </div>
+                </div>
+                <div class="modal-col-form">
+                    <h2>Adicionar Nova Auditoria</h2>
+                    <form id="auditoriaForm">
+                        </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-certificacao" class="modal-overlay">
+        </div>
+
+    <div id="modal-centro-custo" class="modal-overlay">
+        </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <script src="configuracoes.js"></script>
+
+</body>
+</html>

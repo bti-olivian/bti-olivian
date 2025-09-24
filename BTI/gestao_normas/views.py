@@ -1,0 +1,441 @@
+from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.db.models import Prefetch
+import os
+from django.core.exceptions import ValidationError
+from django.contrib.auth.password_validation import validate_password
+from datetime import date
+from .permissions import IsOwnerOrReadOnly
+from rest_framework import generics # Garanta que esta linha existe
+from .models import (
+    Norma,
+    Cliente,
+    User,
+    PerfilUsuario,
+    RevisaoSecundariaHistorico,
+    Notificacao,
+    NormaCliente,
+    Comentario,
+    Auditoria,
+    Certificacao,
+    CentroDeCusto
+)
+from .serializers import (
+    NormaSerializer,
+    ClienteSerializer,
+    UserRegistrationSerializer,
+    PerfilUsuarioSerializer,
+    RevisaoSecundariaHistoricoSerializer,
+    NotificacaoSerializer,
+    CustomEmailLoginSerializer,
+    PasswordResetConfirmSerializer,
+    ComentarioSerializer,
+    AuditoriaSerializer,
+    CertificacaoSerializer,
+    CentroDeCustoSerializer
+)
+
+class NormaListCreateView(generics.ListCreateAPIView):
+    queryset = Norma.objects.all()
+    serializer_class = NormaSerializer
+    permission_classes = [IsAuthenticated]
+
+class NormaDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Norma.objects.all()
+    serializer_class = NormaSerializer
+
+class ClienteListCreateView(generics.ListCreateAPIView):
+    queryset = Cliente.objects.all()
+    serializer_class = ClienteSerializer
+
+class UserRegistrationView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserRegistrationSerializer
+    permission_classes = [AllowAny]
+
+class MinhasNormasListAPIView(generics.ListAPIView):
+    serializer_class = NormaSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        usuario_logado = self.request.user
+        try:
+            # Pré-busca os dados necessários para evitar N+1 queries
+            perfil_do_usuario = PerfilUsuario.objects.select_related('cliente').get(usuario=usuario_logado)
+            
+            # Aqui, você já tem o cliente do usuário.
+            # Agora, busque as normas do cliente e pré-carregue a relação com NormaCliente.
+            return Norma.objects.filter(
+                normacliente__cliente=perfil_do_usuario.cliente
+            ).prefetch_related(
+                'normacliente_set'
+            )
+        except PerfilUsuario.DoesNotExist:
+            return Norma.objects.none()
+
+class GerenciarFuncionariosView(generics.ListAPIView):
+    serializer_class = PerfilUsuarioSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        usuario_logado = self.request.user
+        try:
+            perfil_do_usuario = PerfilUsuario.objects.get(usuario=usuario_logado)
+        except PerfilUsuario.DoesNotExist:
+            raise PermissionDenied("Seu perfil de usuário não está configurado. Acesso negado.")
+
+        if not perfil_do_usuario.is_admin_cliente:
+            raise PermissionDenied("Você não tem permissão para gerenciar funcionários.")
+
+        cliente_do_usuario = perfil_do_usuario.cliente
+        return PerfilUsuario.objects.filter(cliente=cliente_do_usuario)
+
+class RevisaoSecundariaHistoricoCreateAPIView(generics.CreateAPIView):
+    queryset = RevisaoSecundariaHistorico.objects.all()
+    serializer_class = RevisaoSecundariaHistoricoSerializer
+    permission_classes = [IsAuthenticated]
+
+class NotificacaoListAPIView(generics.ListAPIView):
+    serializer_class = NotificacaoSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return Notificacao.objects.filter(usuario=self.request.user).order_by('-data_criacao')
+
+class NotificacaoDetailAPIView(generics.RetrieveUpdateAPIView):
+    queryset = Notificacao.objects.all()
+    serializer_class = NotificacaoSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return Notificacao.objects.filter(usuario=self.request.user)
+
+class CustomLoginAPIView(APIView):
+    permission_classes = [AllowAny]
+    
+    def post(self, request, *args, **kwargs):
+        serializer = CustomEmailLoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.validated_data)
+    
+class PasswordResetAPIView(APIView):
+    permission_classes = [AllowAny]
+    
+    def post(self, request):
+        email = request.data.get('email')
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({"detail": "Não há uma conta com este e-mail."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Gerar token e link de redefinição
+        token = default_token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        
+        # O link do frontend que vai receber o token
+        # Altere o domínio e a porta para o seu frontend
+        reset_url = f"http://localhost:5501/login/redefinir_senha_confirmar.html?uid={uid}&token={token}"
+        
+        # O corpo do e-mail
+        subject = "Redefinir sua senha da Olivian"
+        message = f"""Olá {user.username},
+
+Você solicitou a redefinição de sua senha. Clique no link abaixo para criar uma nova senha:
+
+{reset_url}
+
+Se você não solicitou esta redefinição, por favor, ignore este e-mail.
+
+Atenciosamente,
+Equipe Olivian."""
+        
+        # Enviar o e-mail
+        try:
+            send_mail(subject, message, os.environ.get('EMAIL_HOST_USER', 'webmaster@localhost'), [user.email])
+            return Response({"detail": "E-mail de redefinição enviado com sucesso."})
+        except Exception as e:
+            return Response({"detail": f"Erro ao enviar o e-mail: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class PasswordResetConfirmAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        try:
+            serializer = PasswordResetConfirmSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+
+            uidb64 = serializer.validated_data.get('uid')
+            token = serializer.validated_data.get('token')
+            new_password = serializer.validated_data.get('new_password')
+            
+            # Decodifica o UID e busca o usuário
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = get_user_model().objects.get(pk=uid)
+            
+            # Checa se o token é válido
+            if user is not None and default_token_generator.check_token(user, token):
+                # Valida a nova senha
+                validate_password(new_password, user)
+                
+                # Salva a nova senha
+                user.set_password(new_password)
+                user.save()
+                return Response({"detail": "Senha redefinida com sucesso."})
+            else:
+                return Response({"detail": "O link de redefinição de senha é inválido ou expirou."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
+            return Response({"detail": "O link de redefinição de senha é inválido ou expirou."}, status=status.HTTP_400_BAD_REQUEST)
+        except ValidationError as e:
+            return Response({"detail": e.messages}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(f"Erro inesperado no servidor: {e}")
+            return Response({"detail": "Erro interno no servidor."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+# Em gestao_normas/views.py
+
+class DashboardMetricsAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        try:
+            perfil_usuario = PerfilUsuario.objects.select_related('cliente').get(usuario=user)
+            cliente = perfil_usuario.cliente
+
+            normas = cliente.norma_set.all().prefetch_related(
+                Prefetch(
+                    'normacliente_set',
+                    queryset=NormaCliente.objects.filter(cliente=cliente),
+                    to_attr='norma_do_cliente'
+                )
+            )
+
+            # --- Lógica de Risco (já existente) ---
+            risco_nao_conformidade_count = 0
+            for norma in normas:
+                if norma.norma_do_cliente:
+                    norma_cliente_obj = norma.norma_do_cliente[0]
+                    if norma.revisao_atual and norma_cliente_obj.data_revisao_cliente:
+                        if norma.revisao_atual > norma_cliente_obj.data_revisao_cliente:
+                            risco_nao_conformidade_count += 1
+
+            # --- Lógica de Renovação (já existente) ---
+            dias_para_renovacao = 0
+            if cliente.vigencia_contratual_fim:
+                hoje = date.today()
+                diferenca = cliente.vigencia_contratual_fim - hoje
+                dias_para_renovacao = diferenca.days
+                if dias_para_renovacao < 0:
+                    dias_para_renovacao = 0
+
+            # --- Lógica de Favoritos (já existente) ---
+            normas_favoritas_count = perfil_usuario.normas_favoritas.count()
+
+             # =================================================================
+            # NOVA LÓGICA PARA CONTAR TODAS AS NORMAS COMENTADAS DO CLIENTE
+            # =================================================================
+            normas_comentadas_count = Comentario.objects.filter(norma_cliente__cliente=cliente).count()
+
+            metrics = {
+                "total_normas": normas.count(),
+                "normas_comentadas": normas_comentadas_count, # <-- AQUI USAMOS O VALOR CALCULADO
+                "normas_favoritas": normas_favoritas_count,
+                "dias_renovacao": dias_para_renovacao,
+                "risco_nao_conformidade": risco_nao_conformidade_count,
+            }
+            return Response(metrics, status=status.HTTP_200_OK)
+
+        except PerfilUsuario.DoesNotExist:
+             return Response({"detail": "Perfil de usuário não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            print(f"Erro ao carregar as métricas: {e}")
+            return Response({"detail": f"Erro ao carregar as métricas: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+            # =================================================================
+            # NOVA LÓGICA PARA CALCULAR OS DIAS DE RENOVAÇÃO
+            # =================================================================
+            dias_para_renovacao = 0
+            if cliente.vigencia_contratual_fim:
+                hoje = date.today()
+                diferenca = cliente.vigencia_contratual_fim - hoje
+                dias_para_renovacao = diferenca.days
+                
+                # Garante que não mostraremos um número negativo se o contrato já expirou
+                if dias_para_renovacao < 0:
+                    dias_para_renovacao = 0
+            # =================================================================
+
+            # =================================================================
+            # NOVA LÓGICA PARA CONTAR AS NORMAS FAVORITAS
+            # =================================================================
+            normas_favoritas_count = perfil_usuario.normas_favoritas.count()
+            # =================================================================
+
+            metrics = {
+                "total_normas": normas.count(),
+                "normas_comentadas": 0,
+                "normas_favoritas": normas_favoritas_count,
+                "dias_renovacao": dias_para_renovacao, # <-- AQUI USAMOS O VALOR CALCULADO
+                "risco_nao_conformidade": risco_nao_conformidade_count,
+            }
+            return Response(metrics, status=status.HTTP_200_OK)
+
+        except PerfilUsuario.DoesNotExist:
+             return Response({"detail": "Perfil de usuário não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            print(f"Erro ao carregar as métricas: {e}")
+            return Response({"detail": f"Erro ao carregar as métricas: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        
+class UserProfileAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        user = request.user
+        try:
+            perfil_usuario = PerfilUsuario.objects.get(usuario=user)
+            cliente = perfil_usuario.cliente
+
+            # Constrói o objeto de resposta com os dados completos do cliente
+            user_data = {
+                "id": user.id,
+                "nome_completo": f"{user.first_name} {user.last_name}",
+                "email": user.email,
+                "cliente": {
+                    "id": cliente.id,
+                    "empresa": cliente.empresa,
+                    "cnpj": cliente.cnpj,
+                    "endereco": cliente.endereco,
+                    "bairro": cliente.bairro,
+                    "cidade": cliente.cidade,
+                    "estado": cliente.estado,
+                    "cep": cliente.cep,
+                    "telefone": cliente.telefone,
+                    "vigencia_contratual_inicio": cliente.vigencia_contratual_inicio,
+                    "vigencia_contratual_fim": cliente.vigencia_contratual_fim,
+                }
+            }
+            return Response(user_data, status=status.HTTP_200_OK)
+        except PerfilUsuario.DoesNotExist:
+            return Response({"detail": "Perfil de usuário não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+# No final de gestao_normas/views.py
+
+class FavoritarNormaAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        try:
+            norma = Norma.objects.get(pk=pk)
+            perfil_usuario = PerfilUsuario.objects.get(usuario=request.user)
+
+            if norma in perfil_usuario.normas_favoritas.all():
+                perfil_usuario.normas_favoritas.remove(norma)
+                return Response({"status": "removida dos favoritos"}, status=status.HTTP_200_OK)
+            else:
+                perfil_usuario.normas_favoritas.add(norma)
+                return Response({"status": "adicionada aos favoritos"}, status=status.HTTP_200_OK)
+
+        except (Norma.DoesNotExist, PerfilUsuario.DoesNotExist):
+            return Response({"error": "Norma ou Perfil não encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Em gestao_normas/views.py
+
+# Em gestao_normas/views.py
+
+class ComentarioListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = ComentarioSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        try:
+            norma_pk = self.kwargs['norma_pk']
+            cliente_do_usuario = self.request.user.perfilusuario.cliente
+            norma_cliente = NormaCliente.objects.get(norma__pk=norma_pk, cliente=cliente_do_usuario)
+            return Comentario.objects.filter(norma_cliente=norma_cliente).order_by('-data_criacao')
+        except (PerfilUsuario.DoesNotExist, NormaCliente.DoesNotExist):
+            return Comentario.objects.none()
+
+    def create(self, request, *args, **kwargs):
+        try:
+            # PASSO 1: Encontrar a relação Norma-Cliente correta
+            norma_pk = self.kwargs['norma_pk']
+            cliente_do_usuario = request.user.perfilusuario.cliente
+            norma_cliente = NormaCliente.objects.get(norma__pk=norma_pk, cliente=cliente_do_usuario)
+
+            # PASSO 2: Validar os dados do formulário (descrição, comentário)
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+
+            # PASSO 3: Salvar o comentário, injetando o usuário e a norma_cliente
+            serializer.save(usuario=request.user, norma_cliente=norma_cliente)
+
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+        except PerfilUsuario.DoesNotExist:
+            return Response(
+                {"detail": "Não foi possível encontrar o perfil do seu usuário."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except NormaCliente.DoesNotExist:
+            return Response(
+                {"detail": "A relação entre esta Norma e o Cliente não existe. Associe-os no painel de administração primeiro."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            # Para qualquer outro erro inesperado
+            print(f"Erro inesperado ao criar comentário: {e}")
+            return Response(
+                {"detail": "Ocorreu um erro interno ao tentar salvar o comentário."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
+# No final de gestao_normas/views.py
+
+class AuditoriaListCreateView(generics.ListCreateAPIView):
+    serializer_class = AuditoriaSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Auditoria.objects.filter(cliente=self.request.user.perfilusuario.cliente)
+
+    def perform_create(self, serializer):
+        serializer.save(cliente=self.request.user.perfilusuario.cliente)
+
+class CertificacaoListCreateView(generics.ListCreateAPIView):
+    serializer_class = CertificacaoSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Certificacao.objects.filter(cliente=self.request.user.perfilusuario.cliente)
+
+    def perform_create(self, serializer):
+        serializer.save(cliente=self.request.user.perfilusuario.cliente)
+
+class CentroDeCustoListCreateView(generics.ListCreateAPIView):
+    serializer_class = CentroDeCustoSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return CentroDeCusto.objects.filter(cliente=self.request.user.perfilusuario.cliente)
+
+    def perform_create(self, serializer):
+        serializer.save(cliente=self.request.user.perfilusuario.cliente)
+
+class ComentarioDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Comentario.objects.all()
+    serializer_class = ComentarioSerializer
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+

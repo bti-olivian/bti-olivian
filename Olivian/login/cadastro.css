@@ -1,0 +1,156 @@
+/* ===============================
+   FONTES
+================================ */
+@font-face {
+  font-family: 'Inter';
+  src: url('fonts/Inter-VariableFont_opsz,wght.ttf') format('truetype');
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Garante que padding e border não alterem a largura total */
+}
+
+/* Estilos Globais e Fundo */
+body {
+    font-family: 'Inter', Helvetica, sans-serif;    
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url(../Imagens/fundo_sistema.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+/* Container do Cartão de Login */
+.login-card {
+    display: flex;
+    width: 720px; /* Largura do cartão */
+    height: 400px; /* Altura do cartão */
+    border-radius: 10px;
+    overflow: hidden;
+    /* Efeito de Vidro Fosco */
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px); /* Para compatibilidade com Safari */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+/* Seção Esquerda (Logo) */
+.login-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; /* Centraliza horizontalmente todo o conteúdo */
+    width: 50%;
+    color: white;
+}
+
+.login-left img {
+    max-width: 200px;
+}
+
+.powered-by {
+    display: flex; /* Permite o uso de flexbox para alinhar os itens */
+    align-items: center; /* Alinha o texto e a imagem verticalmente */
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.powered-by p {
+    font-size: 12px;
+    margin: 0;
+    padding-right: 5px;
+}
+
+.powered-by .logo_bti {
+    width: 20px;
+}
+
+/* Seção Direita (Formulário) */
+.login-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.login-form-container {
+    width: 100%;
+    max-width: 300px;
+}
+
+.login-right h1 {
+    color: white;
+    text-align: center;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+/* Estilo dos Campos de Entrada */
+input[type="text"],
+input[type="email"], input[type="password"] {
+    width: 100%;
+    padding: 12px 20px;
+    margin-bottom: 15px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    color: white;
+    box-sizing: border-box;
+}
+
+input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Estilo do Botão */
+button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    background-color: #5D12D3;
+    color: white;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+button:hover {
+    background-color: #1F0459;
+}
+
+/* Estilo dos Links */
+.login-right a {
+    text-align: center;
+    margin-top: 15px;
+    color: white;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.login-right p {
+    text-align: center;
+    margin-top: 3px;
+    color: white;
+    font-size: 12px;
+    font-weight: 200;
+}
+
+.login-right .criar_login {
+    font-size: 14px;
+}
+
+
+

@@ -1,0 +1,264 @@
+/* ===============================
+   FONTES
+================================ */
+@font-face {
+  font-family: 'Inter';
+  src: url('fonts/Inter-VariableFont_opsz,wght.ttf') format('truetype');
+}
+
+
+/* ======================== */
+/* 1. Estilos Globais e do Corpo */
+/* ======================== */
+:root {
+    --text-color-light: #cfcfcf;
+    --text-color-dark: #333;
+    --bg-card: rgba(255, 255, 255, 0.1);
+    --bg-card-dark: #FCFCFC;
+    --border-color: rgba(255, 255, 255, 0.18);
+    --bg-principal: #f4f4f4;
+    --primary-color: #6a11cb;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', Helvetica, sans-serif;
+    background-color: var(--bg-principal);
+    height: 100vh;
+    color: var(--text-color-dark);
+    font-weight: bold;
+    overflow: hidden; /* Remove a barra de rolagem */
+}
+
+/* ======================== */
+/* 2. Layout Principal */
+/* ======================== */
+.main-container {
+    display: flex;
+    height: 100%;
+}
+
+/* ======================== */
+/* 3. Sidebar (Barra Lateral) */
+/* ======================== */
+.sidebar {
+    width: 200px;
+    background-color: #FCFCFC;
+    padding: 10px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    color: var(--text-color-dark);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sidebar-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centraliza a logo */
+    margin-top: -10px;
+}
+
+.sidebar-logo {
+    width: 250px;
+    margin-left: -20px;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-nav {
+    margin-bottom: 5px;
+    margin-top: -25px;
+}
+
+/* Estilos para os ícones dentro dos links da barra lateral */
+.sidebar-nav .nav-item img {
+  /* ... (outros estilos já existentes) ... */
+  opacity: 0.3; /* Define a transparência padrão para 50% */
+  transition: opacity 0.3s ease; /* Adiciona uma transição suave */
+}
+
+/* Quando o mouse passar por cima do item da lista, os ícones se tornam opacos */
+.sidebar-nav .nav-item:hover img {
+  opacity: 1; /* Torna o ícone totalmente visível */
+}
+
+.sidebar-nav .nav-item:hover a {
+  color: rgb(0, 0, 0,0.5);
+}
+
+.sidebar-nav .nav-item.active a {
+  color: #9D3972; /* Cor do texto do item ativo */
+}
+
+.sidebar-nav .nav-item.active img {
+  opacity: 1;
+}
+
+.sidebar-divider {
+    width: 5px; /* Largura da sua imagem de divisor */
+    height: 100%; /* Ocupa toda a altura */
+    background-image: url('../Imagens/fundo_sistema.png');
+    background-repeat: no-repeat;
+    background-size: 100% 100%; /* Garante que a imagem se ajuste ao espaço */
+    background-position: center;
+}
+
+.nav-item a {
+    display: flex;
+    align-items: center;
+    padding: 17px 15px;
+    color: #b1b1b1;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.nav-item a:hover {
+    background-color: var(--bg-card);
+}
+
+.nav-item img {
+    width: 20px;
+    margin-right: 10px;
+}
+
+.sidebar-footer {
+    text-align: center;
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centraliza o footer */
+}
+
+.footer-logo {
+    width: 80px;
+}
+
+.logout-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: transparent;
+    color: var(--text-color-dark);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+    margin-bottom: 10px;
+}
+
+.logout-btn:hover {
+    background-color: var(--bg-card);
+}
+
+/* ======================== */
+/* 4. Área de Conteúdo Principal */
+/* ======================== */
+.content-area {
+    flex-grow: 1;
+    background-color: var(--bg-principal);
+    overflow-y: hidden; /* Mude para hidden, pois o painel interno já tem a rolagem */
+    display: flex;
+    flex-direction: column;
+}
+
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-color-dark);
+    background-color: #FCFCFC;
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: -15px;
+    padding-top: 20px;
+    padding-bottom: 10px;
+}
+
+.user-profile {
+    padding-right: 1px;
+    font-size: 10px;
+    color: #2E0470;
+    font-weight: normal;
+}
+
+.user-profile-name {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.client-profile {
+    padding-left: 15px;
+    font-size: 10px;
+    color: #2E0470;
+    font-weight: normal;
+}
+
+.client-profile-name {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.content-header .client-profile span {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    flex-grow: 1; /* Faz com que este div ocupe todo o espaço disponível */
+    margin-right: 20px; /* Espaçamento entre o texto e o logo */
+}
+
+.content-header .user-profile span {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    flex-grow: 1; /* Faz com que este div ocupe todo o espaço disponível */
+    margin-right: 20px; /* Espaçamento entre o texto e o logo */
+}
+
+.content-header .user-profile span {
+    display: block;
+    text-align: right;
+}
+
+.termosImportantes {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #FCFCFC;
+    margin: 10px;
+    padding: 15px;
+    font-size: 12px;
+    font-weight: 400;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.termosImportantes h2{
+    margin-top: -3px;
+}
+
+.termosRelevantes {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #FCFCFC;
+    margin: 10px;
+    margin-top: -1px;
+    padding: 15px;
+    font-size: 12px;
+    font-weight: 400;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.termosRelevantes h2{
+    margin-top: -3px;
+}

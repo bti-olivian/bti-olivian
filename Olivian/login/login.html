@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olivian</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-left">
+                <img src="../Imagens/olivian_logo.png" alt="Logo Olivian">
+                <div class="powered-by">
+                    <p>Powered by BTI</p> 
+                    <img src="../Imagens/icone_transparente.png" alt="Logo BTI" class="logo_bti">
+                </div>
+            </div>
+            <div class="login-right">
+                <div class="login-form-container">
+                    <h1>LOGIN</h1>
+                    <form id="formLogin" action="#" method="POST">
+                        <input type="email" id="email" placeholder="E-mail" required>
+                        <input type="password" id="password" placeholder="Senha" required>
+                        <button type="submit">Entrar</button>
+                    </form>
+                    <p>Esqueceu sua senha? <a href="redefinir_senha.html"> Clique aqui</a></p>
+                    <p>Ainda não se inscreveu? <a href="cadastro.html" class="criar_login">Crie seu Login!</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="popup-notification" class="hidden">
+        <div class="popup-content">
+            <span id="close-popup" class="close-button">&times;</span>
+            <p>Senha redefinida com sucesso!</p>
+        </div>
+    </div>
+    <script src="login.js"></script>
+</body>
+</html>

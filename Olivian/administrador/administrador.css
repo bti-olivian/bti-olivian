@@ -1,0 +1,477 @@
+/* ===============================
+  FONTES
+================================ */
+@font-face {
+    font-family: 'Inter';
+    src: url('fonts/Inter-VariableFont_opsz,wght.ttf') format('truetype');
+}
+
+
+/* ======================== */
+/* 1. Estilos Globais e do Corpo */
+/* ======================== */
+:root {
+    --text-color-light: #cfcfcf;
+    --text-color-dark: #333;
+    --bg-card: rgba(255, 255, 255, 0.1);
+    --bg-card-dark: #FCFCFC;
+    --border-color: rgba(255, 255, 255, 0.18);
+    --bg-principal: #f4f4f4;
+    --primary-color: #6a11cb;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', Helvetica, sans-serif;
+    background-color: var(--bg-principal);
+    height: 100vh;
+    color: var(--text-color-dark);
+    font-weight: bold;
+    overflow: hidden; 
+}
+
+/* ======================== */
+/* 2. Layout Principal */
+/* ======================== */
+.main-container {
+    display: flex;
+    height: 100%;
+}
+
+/* ======================== */
+/* 3. Sidebar (Barra Lateral) */
+/* ======================== */
+.sidebar {
+    width: 200px;
+    background-color: #FCFCFC;
+    padding: 10px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    color: var(--text-color-dark);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sidebar-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: -10px;
+}
+
+.sidebar-logo {
+    width: 250px;
+    margin-left: -20px;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-nav {
+    margin-bottom: 5px;
+    margin-top: -25px;
+}
+
+.sidebar-nav .nav-item img {
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-nav .nav-item:hover img {
+    opacity: 1;
+}
+
+.sidebar-nav .nav-item:hover a {
+    color: rgb(0, 0, 0,0.5);
+}
+
+.sidebar-nav .nav-item.active a {
+    color: #9D3972;
+}
+
+.sidebar-nav .nav-item.active img {
+    opacity: 1;
+}
+
+.sidebar-divider {
+    width: 5px;
+    height: 100%;
+    background-image: url('../Imagens/fundo_sistema.png');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-position: center;
+}
+
+.nav-item a {
+    display: flex;
+    align-items: center;
+    padding: 17px 15px;
+    color: #b1b1b1;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.nav-item a:hover {
+    background-color: var(--bg-card);
+}
+
+.nav-item img {
+    width: 20px;
+    margin-right: 10px;
+}
+
+.sidebar-footer {
+    text-align: center;
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.footer-logo {
+    width: 80px;
+}
+
+.logout-btn:hover {
+    background-color: var(--bg-card);
+}
+
+/* ======================== */
+/* 4. Área de Conteúdo Principal */
+/* ======================== */
+.content-area {
+    flex-grow: 1;
+    background-color: var(--bg-principal);
+    overflow-y: hidden; /* Mudei para auto para permitir rolagem se necessário */
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-color-dark);
+    background-color: #FCFCFC;
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: -15px;
+    padding-top: 20px;
+    padding-bottom: 10px;
+}
+
+.user-profile {
+    padding-right: 1px;
+    font-size: 10px;
+    color: #2E0470;
+    font-weight: normal;
+}
+
+.user-profile-name {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.client-profile {
+    padding-left: 15px;
+    font-size: 10px;
+    color: #2E0470;
+    font-weight: normal;
+}
+
+.client-profile-name {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.content-header .client-profile span {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    flex-grow: 1;
+    margin-right: 20px;
+}
+
+.content-header .user-profile span {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    flex-grow: 1;
+    margin-right: 20px;
+}
+
+.content-header .user-profile span {
+    display: block;
+    text-align: right;
+}
+
+.head_admin {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #FCFCFC;
+    margin: 10px;
+    padding: 15px;
+    font-size: 11px;
+    font-weight: 400;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 0; 
+}
+
+.head_admin h2 {
+    margin-top: -3px;
+    margin-bottom: -7px;
+}
+
+
+/* Container da tabela */
+.permissoes-container {
+    padding: 20px;
+    flex-grow: 1;
+    overflow-y: auto; /* A mágica acontece aqui! */
+    overflow-x: hidden;
+    min-height: 0;
+    table-layout: fixed;
+}
+
+/* Tabela */
+.permissoes-container table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: -20px;
+}
+
+/* Cabeçalho da tabela com gradiente */
+.permissoes-container th {
+    background: #9D3972;
+    color: white;
+    padding: 12px;
+    text-align: center;
+    font-weight: bold;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: none;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+/* Células do corpo da tabela */
+.permissoes-container td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+/* Zebra striping (linhas alternadas) para melhor leitura */
+.permissoes-container tbody tr:nth-child(even) {
+    background-color: #f5f5f5;
+}
+
+/* Efeito de hover na linha */
+.permissoes-container tbody tr:hover {
+    background-color: #e0e0e0;
+    transition: background-color 0.3s ease;
+}
+
+/* Centraliza o texto do nome do usuário e ajusta a largura da coluna */
+.permissoes-container td:nth-child(2) {
+    text-align: center;
+    font-weight: 500;
+    width: 150px;
+}
+
+/* Ajusta a largura da primeira coluna de seleção */
+.permissoes-container th:first-child,
+.permissoes-container td:first-child {
+    width: 5px;
+}
+
+/* --- ESTILOS PARA OS BOTÕES GLOBAIS --- */
+.global-actions {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.global-actions .button-primary {
+    background-color: #9D3972;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.global-actions .button-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.global-actions .button-secondary {
+    background-color: #ccc;
+    color: #555;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-right: 10px;
+}
+
+.global-actions .button-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+
+/* --- ESTILOS PARA O FILTRO DE USUÁRIO --- */
+.filter-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+    margin: -20px -30px;
+    margin-bottom: 20px;
+    padding: 10px;
+}
+
+.user-filter {
+    flex-grow: 1;
+}
+
+.user-filter ::placeholder {
+    color: #ccc;
+    font-size: 12px;
+}
+
+.filter-controls input[type="text"] {
+    padding: 7px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    width: 70;
+}
+
+
+/* --- ESTILOS PARA CHECKBOX CUSTOMIZADO --- */
+
+/* Oculta o checkbox padrão */
+.hidden-checkbox {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* Estilo para a representação visual do checkbox */
+.checkbox-display {
+    height: 10px;
+    width: 10px;
+    background-color: #eee;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+/* Estilo quando o checkbox customizado está marcado */
+.hidden-checkbox:checked + .checkbox-display {
+    background-color: #4CAF50;
+    border-color: #46a049;
+}
+
+/* Estilo para o pontinho verde quando o checkbox está marcado */
+.hidden-checkbox:checked + .checkbox-display::after {
+    content: '';
+    position: absolute;
+    width: 5px;   /* Tamanho do pontinho */
+    height: 5px;  /* Tamanho do pontinho */
+    background-color: white; /* Cor do pontinho */
+    border-radius: 50%; /* Faz com que seja um círculo */
+    top: 50%; /* Centraliza verticalmente */
+    left: 50%; /* Centraliza horizontalmente */
+    transform: translate(-50%, -50%); /* Ajuste fino para centralizar */
+    opacity: 1; /* Garante que o pontinho esteja visível */
+}
+
+/* Centraliza o checkbox customizado na célula */
+.permissoes-container td .custom-checkbox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+/* Lógica de hover e visibilidade para 'select-all-row' */
+.select-all-row + .checkbox-display {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.permissoes-container tbody tr:hover .select-all-row + .checkbox-display {
+    opacity: 1;
+}
+
+
+/* Lógica para 'select-all-column' no cabeçalho */
+.column-with-hover {
+    cursor: pointer;
+}
+
+.column-with-hover .custom-checkbox {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    display: none; /* Começa oculto */
+}
+
+.column-with-hover:hover .custom-checkbox {
+    display: inline-flex; /* Mostra no hover do TH */
+}
+
+
+/* --- ESTILOS PARA O MODO BLOQUEADO --- */
+
+.permissions-blocked .checkbox-display {
+    cursor: default;
+    background-color: #f0f0f0;
+    border-color: #ddd;
+}
+
+.permissions-blocked .hidden-checkbox:checked + .checkbox-display {
+    background-color: #a5d6a7; /* Verde mais claro */
+    border-color: #98c99b;
+}
+
+.permissions-blocked .hidden-checkbox:checked + .checkbox-display::after {
+    border-color: #e8f5e9; /* Branco com um pouco de verde */
+}
+
+/* Oculta os controles de seleção em massa quando bloqueado */
+.permissions-blocked .select-all-row + .checkbox-display {
+    display: none;
+}
+.permissions-blocked .column-with-hover:hover .custom-checkbox {
+    display: none;
+}

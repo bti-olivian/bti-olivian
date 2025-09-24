@@ -1,0 +1,539 @@
+/* ===============================
+   FONTES
+================================ */
+@font-face {
+  font-family: 'Inter';
+  src: url('fonts/Inter-VariableFont_opsz,wght.ttf') format('truetype');
+}
+
+
+/* ======================== */
+/* 1. Estilos Globais e do Corpo */
+/* ======================== */
+:root {
+    --text-color-light: #cfcfcf;
+    --text-color-dark: #333;
+    --bg-card: rgba(255, 255, 255, 0.1);
+    --bg-card-dark: #FCFCFC;
+    --border-color: rgba(255, 255, 255, 0.18);
+    --bg-principal: #f4f4f4;
+    --primary-color: #6a11cb;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', Helvetica, sans-serif;
+    background-color: var(--bg-principal);
+    height: 100vh;
+    color: var(--text-color-dark);
+    font-weight: bold;
+    overflow: hidden; /* Remove a barra de rolagem */
+}
+
+/* ======================== */
+/* 2. Layout Principal */
+/* ======================== */
+.main-container {
+    display: flex;
+    height: 100%;
+}
+
+/* ======================== */
+/* 3. Sidebar (Barra Lateral) */
+/* ======================== */
+.sidebar {
+    width: 200px;
+    background-color: #FCFCFC;
+    padding: 10px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    color: var(--text-color-dark);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sidebar-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centraliza a logo */
+    margin-top: -10px;
+}
+
+.sidebar-logo {
+    width: 250px;
+    margin-left: -20px;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-nav {
+    margin-bottom: 5px;
+    margin-top: -25px;
+}
+
+/* Estilos para os ícones dentro dos links da barra lateral */
+.sidebar-nav .nav-item img {
+  /* ... (outros estilos já existentes) ... */
+  opacity: 0.3; /* Define a transparência padrão para 50% */
+  transition: opacity 0.3s ease; /* Adiciona uma transição suave */
+}
+
+/* Quando o mouse passar por cima do item da lista, os ícones se tornam opacos */
+.sidebar-nav .nav-item:hover img {
+  opacity: 1; /* Torna o ícone totalmente visível */
+}
+
+.sidebar-nav .nav-item:hover a {
+  color: rgb(0, 0, 0,0.5);
+}
+
+.sidebar-nav .nav-item.active a {
+  color: #9D3972; /* Cor do texto do item ativo */
+}
+
+.sidebar-nav .nav-item.active img {
+  opacity: 1;
+}
+
+.sidebar-divider {
+    width: 5px; /* Largura da sua imagem de divisor */
+    height: 100%; /* Ocupa toda a altura */
+    background-image: url('../Imagens/fundo_sistema.png');
+    background-repeat: no-repeat;
+    background-size: 100% 100%; /* Garante que a imagem se ajuste ao espaço */
+    background-position: center;
+}
+
+.nav-item a {
+    display: flex;
+    align-items: center;
+    padding: 17px 15px;
+    color: #b1b1b1;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.nav-item a:hover {
+    background-color: var(--bg-card);
+}
+
+.nav-item img {
+    width: 20px;
+    margin-right: 10px;
+}
+
+.sidebar-footer {
+    text-align: center;
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centraliza o footer */
+}
+
+.footer-logo {
+    width: 80px;
+}
+
+.logout-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: transparent;
+    color: var(--text-color-dark);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+    margin-bottom: 10px;
+}
+
+.logout-btn:hover {
+    background-color: var(--bg-card);
+}
+
+/* ======================== */
+/* 4. Área de Conteúdo Principal */
+/* ======================== */
+.content-area {
+    flex-grow: 1;
+    background-color: var(--bg-principal);
+    overflow-y: hidden; /* Mude para hidden, pois o painel interno já tem a rolagem */
+    display: flex;
+    flex-direction: column;
+}
+
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-color-dark);
+    background-color: #FCFCFC;
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: -15px;
+    padding-top: 20px;
+    padding-bottom: 10px;
+}
+
+.user-profile {
+    padding-right: 1px;
+    font-size: 10px;
+    color: #2E0470;
+    font-weight: normal;
+}
+
+.user-profile-name {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.client-profile {
+    padding-left: 15px;
+    font-size: 10px;
+    color: #2E0470;
+    font-weight: normal;
+}
+
+.client-profile-name {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.content-header .client-profile span {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    flex-grow: 1; /* Faz com que este div ocupe todo o espaço disponível */
+    margin-right: 20px; /* Espaçamento entre o texto e o logo */
+}
+
+.content-header .user-profile span {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    flex-grow: 1; /* Faz com que este div ocupe todo o espaço disponível */
+    margin-right: 20px; /* Espaçamento entre o texto e o logo */
+}
+
+.content-header .user-profile span {
+    display: block;
+    text-align: right;
+}
+
+/* ========================================================== */
+/* ESTILOS PARA OS DADOS EMPRESARIAIS */
+/* ========================================================== */
+
+.dadosEmpresariais{
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #FCFCFC;
+    margin: 10px;
+    padding: 15px;
+    font-size: 12px;
+    font-weight: 300;
+}
+
+.blocoDados {
+    margin: 10px 0px;
+}
+
+.blocoDados_kit {
+    margin: 10px 0px;
+}
+
+.dadosEmpresariais h2 {
+    font-size: 25px;
+    margin-top: 0px;
+}
+
+.tituloDados {
+    font-weight: bold;
+}
+
+.auditoriaForm {
+    margin: 20px 0px;
+}
+
+/* ========================================================== */
+/* ESTILOS PARA OS CAMPOS DE SELEÇÃO (BOTÕES/TAGS) */
+/* ========================================================== */
+
+
+/* Container que agrupa os botões/tags */
+/* ========================================================== */
+/* ESTILOS PARA OS CAMPOS DE SELEÇÃO (DROPDOWN) */
+/* ========================================================== */
+
+/* Estilo para a caixa de seleção */
+.custom-select {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    background-color: #fcfcfc;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    cursor: pointer;
+    
+    /* Remove a aparência padrão do navegador */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    /* Adiciona nossa própria seta customizada usando SVG */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23555' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+}
+
+/* Efeito ao passar o mouse */
+.custom-select:hover {
+    border-color: #999;
+}
+
+/* Efeito ao focar (quando clicado) */
+.custom-select:focus {
+    outline: none;
+    border-color: #6a11cb; /* Cor primária para indicar foco */
+    box-shadow: 0 0 0 2px rgba(106, 17, 203, 0.2);
+}
+
+/* Estilo para o texto do placeholder "Selecione uma opção..." */
+.custom-select:has(option[disabled]:checked) {
+    color: #888;
+}
+
+/* Estilos específicos para a seção de comentários */
+.comment-details {
+    display: flex;
+    gap: 150px;
+    font-size: 12px;
+    color: #666;
+}
+
+.comment-details span strong {
+    color: #333;
+}
+
+.comment-text {
+    font-size: 12px;
+    color: #666;
+}
+
+.comment-text strong {
+    color: #333;
+}
+
+
+
+/* Estilos para o formulário dentro do popup */
+.form-group {
+    margin-bottom: 5px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 2px;
+    font-weight: 300;
+    color: #403333;
+}
+.form-group input,
+.form-group textarea {
+    font-family: 'Inter', Helvetica, sans-serif;
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box; /* Garante que o padding não aumente a largura */
+    resize: none;
+}
+
+.form-group ::placeholder {
+    color: #ccc;
+    font-size: 10px;
+}
+
+/* Estilos para o novo contêiner das datas */
+.data-kit {
+    display: flex; /* Habilita o Flexbox */
+    gap: 15px; /* Define o espaçamento entre os campos */
+    flex-wrap: wrap; /* Permite quebrar a linha em telas pequenas */
+}
+
+/* Garante que cada campo de data ocupe metade do espaço disponível */
+.data-kit .form-group {
+    flex: 1; /* Faz com que cada campo cresça para ocupar espaço igual */
+}
+
+.spaced-text {
+    margin-left: 30px; /* Adiciona um espaço de 15px à direita */
+}
+
+/* Container para os botões de ação do popup */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 5px;
+}
+.button-primary, .button-secondary {
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+}
+.button-primary {
+    background-color: #9D3972;
+    color: white;
+}
+.button-secondary {
+    background-color: #f0f0f0;
+    color: #555;
+    border: 1px solid #ccc;
+}
+
+.form-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Centraliza os formulários no contêiner */
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.form-container form {
+    flex: 1; /* Permite que o formulário cresça, mas de forma limitada */
+    min-width: 300px; /* Largura mínima para telas menores */
+    max-width: 400px; /* Adiciona uma largura máxima para evitar que fiquem muito largos */
+}
+
+h3 {
+    margin-bottom: 5px;
+}
+
+/* Adicione estas novas regras ao seu configuracoes.css */
+
+.management-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 10px;
+}
+
+.management-section {
+    background-color: #FCFCFC;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.management-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.management-header h3 {
+    margin: 0;
+    font-size: 1.1em;
+}
+
+.add-btn {
+    background-color: #9D3972;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 30px;
+    text-align: center;
+}
+
+.item-list .item-name {
+    display: block;
+    background-color: #f4f4f4;
+    padding: 8px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}
+
+/* Estilos para os Popups */
+.modal-overlay {
+    display: none; /* Começa escondido */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content-large {
+    background-color: #fff;
+    padding: 25px 30px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 900px; /* Popup maior */
+    position: relative;
+}
+
+.modal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.popup-item-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.popup-item {
+    border: 1px solid #eee;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.popup-item h4 {
+    margin: 0 0 5px 0;
+}
+
+.popup-item p {
+    margin: 2px 0;
+    font-size: 0.85em;
+    color: #555;
+}
+
+.popup-item .normas-list {
+    font-size: 0.8em;
+    font-style: italic;
+    color: #777;
+}

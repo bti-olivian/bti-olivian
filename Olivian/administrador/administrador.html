@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrador</title>
+    <link rel="stylesheet" href="administrador.css">
+</head>
+<body>
+
+    <div class="main-container">
+
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="../Imagens/olivian_logo_colorido.png" alt="Logo Olivian" class="sidebar-logo">
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item">
+                        <a href="/acervo_tecnico/acervo_tecnico.html"> 
+                            <img src="../Imagens/acervo.png" alt="Ícone Acervo" class="nav-icon">
+                            Acervo Técnico
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#">
+                            <img src="../Imagens/relatorio.png" alt="Ícone Relatórios" class="nav-icon">
+                            Relatórios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#">
+                            <img src="../Imagens/dashboard.png" alt="Ícone Dashboard" class="nav-icon">
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/glossario/glossario.html">
+                            <img src="../Imagens/glossario-ativo.png" alt="Ícone Glossário" class="nav-icon">
+                            Glossário
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/configuracoes/configuracoes.html">
+                            <img src="../Imagens/configuracoes.png" alt="Ícone Configurações" class="nav-icon">
+                            Configurações
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="/administrador/administrador.html">
+                            <img src="../Imagens/administrador-ativo.png" alt="Ícone Administrador" class="nav-icon">
+                            Administrador
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="../login/login.html">
+                            <img src="../Imagens/sair.png" alt="Ícone Sair" class="nav-icon">
+                            Sair
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <img src="../Imagens/bti_logo_colorido.png" alt="Logo BTI" class="footer-logo">
+            </div>
+        </aside>
+        <div class="sidebar-divider"></div>
+
+        <main class="content-area">
+            <header class="content-header">
+                <div class="client-profile">
+                    <span id="client-name" class="client-profile-name">Itaú Unibanco</span>
+                    <span id="client-cnpj">514.467.698-79</span>
+                </div>
+                <div class="user-profile">
+                    <span id="user-name" class="user-profile-name">Olá, Nichollas Mathias!</span>
+                    <span id="user-email">nichollas.souza@itau-unibanco.com.br</span>
+                    <span id="user-date">13/11/2025 - 08:53</span>
+                </div>
+            </header>
+
+            <div class="head_admin">
+                <h2>Administradores</h2>
+                <p>Conceda aos usuários acesso administrativo adicional aos recursos do sistema Olivian. Você pode atribuir aos usuários funções administrativas que você também possui.</p>
+
+                <div class="permissoes-container">
+                    <div class="filter-controls">
+                        <div class="user-filter">
+                            <input type="text" id="filter-user" placeholder="Digite o nome do usuário">
+                        </div>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Usuário</th>
+                                <th class="column-with-hover">Auditorias</th>
+                                <th class="column-with-hover">Certificações</th>
+                                <th class="column-with-hover">Centros de Custos</th>
+                                <th class="column-with-hover">Comentários</th>
+                                <th class="column-with-hover">Preços de Normas</th>
+                                <th class="column-with-hover">Favoritos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox select-all-row">
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>Nichollas Mathias</td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox">
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox">
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox">
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox select-all-row">
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>Chico da Silva</td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox select-all-row">
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>Chico da Silva</td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox select-all-row">
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>Chico da Silva</td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox select-all-row">
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>Chico da Silva</td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox select-all-row">
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>Chico da Silva</td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox select-all-row">
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>Chico da Silva</td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox select-all-row">
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>Chico da Silva</td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox select-all-row">
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>Chico da Silva</td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox select-all-row">
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>Chico da Silva</td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox select-all-row">
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>José Maria</td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox">
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox">
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox">
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox">
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label class="custom-checkbox">
+                                        <input type="checkbox" class="hidden-checkbox" checked>
+                                        <span class="checkbox-display"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="global-actions">
+                    <button class="button-secondary" id="cancelar-alteracoes" style="display:none;">Cancelar Alterações</button>
+                    <button class="button-primary" id="aplicar-alteracoes" style="display:none;">Aplicar Alterações</button>
+                    <button class="button-primary" id="alterar-acessos">Alterar</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="administrador.js"></script>
+</body>
+</html>
