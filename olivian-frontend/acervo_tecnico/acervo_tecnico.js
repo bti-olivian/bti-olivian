@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- VARIÁVEIS GLOBAIS E SELETORES ---
     let todasAsNormas = [], normaAtualId = null, infoUsuario = null;
     const accessToken = localStorage.getItem('accessToken');
-    if (!accessToken) { console.error('Utilizador não autenticado.'); return; }
+    if (!accessToken) { console.error('Utilizador não autenticado.'); window.location.href = '../login/login.html'; return; }
 
     const [modal, openBtnIcon, closeButtons, commentForm, commentCountSpan, listaComentariosContainer, filtroInput, listaNormasDiv, favoriteBtn, filtroFavoritasBtn, filtroTodasBtn, filtroDesatualizadasBtn, filtroComentadasBtn] = [
         document.getElementById('commentModal'), document.getElementById('openCommentModalIcon'), document.querySelectorAll('.close-button'),
@@ -33,7 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('.client-profile').style.opacity = 1;
             document.querySelector('.user-profile').style.opacity = 1;
             document.getElementById('client-name').textContent = profileData.cliente.empresa;
-            document.getElementById('client-cnpj').textContent = profileData.cliente.cnpj;
+            // APLICA A FORMATAÇÃO DO CNPJ AQUI
+            document.getElementById('client-cnpj').textContent = formatarCNPJ(profileData.cliente.cnpj);
             document.getElementById('user-name').textContent = `Olá, ${profileData.nome_completo}`;
             document.getElementById('user-email').textContent = profileData.email;
             const dataAtual = new Date();
@@ -115,56 +116,53 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function carregarComentariosDoPopup() {
-    listaComentariosContainer.innerHTML = '<p>A carregar comentários...</p>';
-    if (!normaAtualId) {
-        listaComentariosContainer.innerHTML = '<p>Selecione uma norma para ver os comentários.</p>';
-        return;
-    }
-    const comentarios = await fetchData(`http://127.0.0.1:8000/api/normas/${normaAtualId}/comentarios/`);
-    listaComentariosContainer.innerHTML = '';
+        listaComentariosContainer.innerHTML = '<p>A carregar comentários...</p>';
+        if (!normaAtualId) {
+            listaComentariosContainer.innerHTML = '<p>Selecione uma norma para ver os comentários.</p>';
+            return;
+        }
+        const comentarios = await fetchData(`http://127.0.0.1:8000/api/normas/${normaAtualId}/comentarios/`);
+        listaComentariosContainer.innerHTML = '';
 
-    if (!comentarios || comentarios.length === 0) {
-        listaComentariosContainer.innerHTML = '<p>Nenhum comentário para esta norma ainda.</p>';
-    } else {
-        comentarios.forEach(comentario => {
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'comment-item';
-            itemDiv.dataset.commentId = comentario.id;
-            const dataFormatada = new Date(comentario.data_criacao).toLocaleString('pt-BR');
+        if (!comentarios || comentarios.length === 0) {
+            listaComentariosContainer.innerHTML = '<p>Nenhum comentário para esta norma ainda.</p>';
+        } else {
+            comentarios.forEach(comentario => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'comment-item';
+                itemDiv.dataset.commentId = comentario.id;
+                const dataFormatada = new Date(comentario.data_criacao).toLocaleString('pt-BR');
 
-            // --- ALTERAÇÃO PRINCIPAL AQUI ---
-            // Agora criamos botões com ícones SVG
-            let actionsHtml = `
-                <button class="reply-btn" title="Comentar">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"></polyline><path d="M20 18v-2a4 4 0 0 0-4-4H4"></path></svg>
-                </button>`;
-
-            if (infoUsuario && comentario.usuario === infoUsuario.id) {
-                actionsHtml += `
-                    <button class="edit-btn" title="Alterar">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                    </button>
-                    <button class="delete-btn" title="Excluir">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                let actionsHtml = `
+                    <button class="reply-btn" title="Comentar">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"></polyline><path d="M20 18v-2a4 4 0 0 0-4-4H4"></path></svg>
                     </button>`;
-            }
-            // --- FIM DA ALTERAÇÃO ---
 
-            itemDiv.innerHTML = `
-                <div class="comment-header">
-                    <span class="comment-author">${comentario.usuario_nome || 'Utilizador'}</span>
-                    <span class="comment-date">${dataFormatada}</span>
-                </div>
-                <div class="comment-body">
-                    <p><strong>${comentario.descricao}</strong></p>
-                    <p>${comentario.comentario}</p>
-                </div>
-                <div class="comment-actions">${actionsHtml}</div>
-            `;
-            listaComentariosContainer.appendChild(itemDiv);
-        });
+                if (infoUsuario && comentario.usuario === infoUsuario.id) {
+                    actionsHtml += `
+                        <button class="edit-btn" title="Alterar">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                        </button>
+                        <button class="delete-btn" title="Excluir">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        </button>`;
+                }
+
+                itemDiv.innerHTML = `
+                    <div class="comment-header">
+                        <span class="comment-author">${comentario.usuario_nome || 'Utilizador'}</span>
+                        <span class="comment-date">${dataFormatada}</span>
+                    </div>
+                    <div class="comment-body">
+                        <p><strong>${comentario.descricao}</strong></p>
+                        <p>${comentario.comentario}</p>
+                    </div>
+                    <div class="comment-actions">${actionsHtml}</div>
+                `;
+                listaComentariosContainer.appendChild(itemDiv);
+            });
+        }
     }
-}
 
     async function toggleFavorito() {
         if (!normaAtualId) return;
@@ -198,10 +196,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     listaComentariosContainer.addEventListener('click', async (event) => {
-        const target = event.target;
+        const target = event.target.closest('button'); // Melhor para capturar cliques nos SVGs dentro dos botões
+        if (!target) return;
+
+        const commentItem = target.closest('.comment-item');
+        const commentId = commentItem.dataset.commentId;
+
         if (target.classList.contains('delete-btn')) {
-            const commentItem = target.closest('.comment-item');
-            const commentId = commentItem.dataset.commentId;
             if (confirm('Tem a certeza que deseja excluir este comentário?')) {
                 const success = await fetchData(`http://127.0.0.1:8000/api/comentarios/${commentId}/`, { method: 'DELETE' });
                 if (success) {
@@ -213,6 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
+        // Adicionar lógica para 'edit-btn' e 'reply-btn' aqui se necessário
     });
 
     listaNormasDiv.addEventListener('click', (event) => {
