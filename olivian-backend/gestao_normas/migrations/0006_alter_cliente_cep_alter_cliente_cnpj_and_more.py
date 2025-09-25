@@ -13,16 +13,16 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='cliente',
             name='cep',
-            field=models.CharField(help_text='Somente números', max_length=8),
+            field=models.CharField(help_text='Somente numeros', max_length=8),
         ),
         migrations.AlterField(
             model_name='cliente',
             name='cnpj',
-            field=models.CharField(help_text='Somente números', max_length=14, unique=True),
+            field=models.CharField(help_text='Somente numeros', max_length=14, unique=True),
         ),
         migrations.AlterField(
             model_name='cliente',
             name='telefone',
-            field=models.CharField(help_text='Somente números (incluir DDD)', max_length=11),
+            field=models.CharField(help_text='Somente numeros (incluir DDD)', max_length=11),
         ),
     ]

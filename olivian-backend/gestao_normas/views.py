@@ -70,11 +70,11 @@ class MinhasNormasListAPIView(generics.ListAPIView):
     def get_queryset(self):
         usuario_logado = self.request.user
         try:
-            # Pré-busca os dados necessários para evitar N+1 queries
+            # Pre-busca os dados necessarios para evitar N+1 queries
             perfil_do_usuario = PerfilUsuario.objects.select_related('cliente').get(usuario=usuario_logado)
             
-            # Aqui, você já tem o cliente do usuário.
-            # Agora, busque as normas do cliente e pré-carregue a relação com NormaCliente.
+            # Aqui, voce ja tem o cliente do usuario.
+            # Agora, busque as normas do cliente e pre-carregue a relacao com NormaCliente.
             return Norma.objects.filter(
                 normacliente__cliente=perfil_do_usuario.cliente
             ).prefetch_related(
@@ -92,10 +92,10 @@ class GerenciarFuncionariosView(generics.ListAPIView):
         try:
             perfil_do_usuario = PerfilUsuario.objects.get(usuario=usuario_logado)
         except PerfilUsuario.DoesNotExist:
-            raise PermissionDenied("Seu perfil de usuário não está configurado. Acesso negado.")
+            raise PermissionDenied("Seu perfil de usuario nao esta configurado. Acesso negado.")
 
         if not perfil_do_usuario.is_admin_cliente:
-            raise PermissionDenied("Você não tem permissão para gerenciar funcionários.")
+            raise PermissionDenied("Voce nao tem permissao para gerenciar funcionarios.")
 
         cliente_do_usuario = perfil_do_usuario.cliente
         return PerfilUsuario.objects.filter(cliente=cliente_do_usuario)
@@ -136,25 +136,25 @@ class PasswordResetAPIView(APIView):
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
-            return Response({"detail": "Não há uma conta com este e-mail."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Nao ha uma conta com este e-mail."}, status=status.HTTP_400_BAD_REQUEST)
         
-        # Gerar token e link de redefinição
+        # Gerar token e link de redefinicao
         token = default_token_generator.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         
         # O link do frontend que vai receber o token
-        # Altere o domínio e a porta para o seu frontend
+        # Altere o dominio e a porta para o seu frontend
         reset_url = f"http://localhost:5501/login/redefinir_senha_confirmar.html?uid={uid}&token={token}"
         
         # O corpo do e-mail
         subject = "Redefinir sua senha da Olivian"
-        message = f"""Olá {user.username},
+        message = f"""Ola {user.username},
 
-Você solicitou a redefinição de sua senha. Clique no link abaixo para criar uma nova senha:
+Voce solicitou a redefinicao de sua senha. Clique no link abaixo para criar uma nova senha:
 
 {reset_url}
 
-Se você não solicitou esta redefinição, por favor, ignore este e-mail.
+Se voce nao solicitou esta redefinicao, por favor, ignore este e-mail.
 
 Atenciosamente,
 Equipe Olivian."""
@@ -162,7 +162,7 @@ Equipe Olivian."""
         # Enviar o e-mail
         try:
             send_mail(subject, message, os.environ.get('EMAIL_HOST_USER', 'webmaster@localhost'), [user.email])
-            return Response({"detail": "E-mail de redefinição enviado com sucesso."})
+            return Response({"detail": "E-mail de redefinicao enviado com sucesso."})
         except Exception as e:
             return Response({"detail": f"Erro ao enviar o e-mail: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -178,11 +178,11 @@ class PasswordResetConfirmAPIView(APIView):
             token = serializer.validated_data.get('token')
             new_password = serializer.validated_data.get('new_password')
             
-            # Decodifica o UID e busca o usuário
+            # Decodifica o UID e busca o usuario
             uid = force_str(urlsafe_base64_decode(uidb64))
             user = get_user_model().objects.get(pk=uid)
             
-            # Checa se o token é válido
+            # Checa se o token e valido
             if user is not None and default_token_generator.check_token(user, token):
                 # Valida a nova senha
                 validate_password(new_password, user)
@@ -192,10 +192,10 @@ class PasswordResetConfirmAPIView(APIView):
                 user.save()
                 return Response({"detail": "Senha redefinida com sucesso."})
             else:
-                return Response({"detail": "O link de redefinição de senha é inválido ou expirou."}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"detail": "O link de redefinicao de senha e invalido ou expirou."}, status=status.HTTP_400_BAD_REQUEST)
         
         except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
-            return Response({"detail": "O link de redefinição de senha é inválido ou expirou."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "O link de redefinicao de senha e invalido ou expirou."}, status=status.HTTP_400_BAD_REQUEST)
         except ValidationError as e:
             return Response({"detail": e.messages}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
@@ -221,7 +221,7 @@ class DashboardMetricsAPIView(APIView):
                 )
             )
 
-            # --- Lógica de Risco (já existente) ---
+            # --- Logica de Risco (ja existente) ---
             risco_nao_conformidade_count = 0
             for norma in normas:
                 if norma.norma_do_cliente:
@@ -230,7 +230,7 @@ class DashboardMetricsAPIView(APIView):
                         if norma.revisao_atual > norma_cliente_obj.data_revisao_cliente:
                             risco_nao_conformidade_count += 1
 
-            # --- Lógica de Renovação (já existente) ---
+            # --- Logica de Renovacao (ja existente) ---
             dias_para_renovacao = 0
             if cliente.vigencia_contratual_fim:
                 hoje = date.today()
@@ -239,11 +239,11 @@ class DashboardMetricsAPIView(APIView):
                 if dias_para_renovacao < 0:
                     dias_para_renovacao = 0
 
-            # --- Lógica de Favoritos (já existente) ---
+            # --- Logica de Favoritos (ja existente) ---
             normas_favoritas_count = perfil_usuario.normas_favoritas.count()
 
              # =================================================================
-            # NOVA LÓGICA PARA CONTAR TODAS AS NORMAS COMENTADAS DO CLIENTE
+            # NOVA LoGICA PARA CONTAR TODAS AS NORMAS COMENTADAS DO CLIENTE
             # =================================================================
             normas_comentadas_count = Comentario.objects.filter(norma_cliente__cliente=cliente).count()
 
@@ -257,13 +257,13 @@ class DashboardMetricsAPIView(APIView):
             return Response(metrics, status=status.HTTP_200_OK)
 
         except PerfilUsuario.DoesNotExist:
-             return Response({"detail": "Perfil de usuário não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+             return Response({"detail": "Perfil de usuario nao encontrado."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            print(f"Erro ao carregar as métricas: {e}")
-            return Response({"detail": f"Erro ao carregar as métricas: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            print(f"Erro ao carregar as metricas: {e}")
+            return Response({"detail": f"Erro ao carregar as metricas: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
             # =================================================================
-            # NOVA LÓGICA PARA CALCULAR OS DIAS DE RENOVAÇÃO
+            # NOVA LoGICA PARA CALCULAR OS DIAS DE RENOVAcaO
             # =================================================================
             dias_para_renovacao = 0
             if cliente.vigencia_contratual_fim:
@@ -271,13 +271,13 @@ class DashboardMetricsAPIView(APIView):
                 diferenca = cliente.vigencia_contratual_fim - hoje
                 dias_para_renovacao = diferenca.days
                 
-                # Garante que não mostraremos um número negativo se o contrato já expirou
+                # Garante que nao mostraremos um numero negativo se o contrato ja expirou
                 if dias_para_renovacao < 0:
                     dias_para_renovacao = 0
             # =================================================================
 
             # =================================================================
-            # NOVA LÓGICA PARA CONTAR AS NORMAS FAVORITAS
+            # NOVA LoGICA PARA CONTAR AS NORMAS FAVORITAS
             # =================================================================
             normas_favoritas_count = perfil_usuario.normas_favoritas.count()
             # =================================================================
@@ -292,10 +292,10 @@ class DashboardMetricsAPIView(APIView):
             return Response(metrics, status=status.HTTP_200_OK)
 
         except PerfilUsuario.DoesNotExist:
-             return Response({"detail": "Perfil de usuário não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+             return Response({"detail": "Perfil de usuario nao encontrado."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            print(f"Erro ao carregar as métricas: {e}")
-            return Response({"detail": f"Erro ao carregar as métricas: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            print(f"Erro ao carregar as metricas: {e}")
+            return Response({"detail": f"Erro ao carregar as metricas: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         
 class UserProfileAPIView(APIView):
@@ -307,7 +307,7 @@ class UserProfileAPIView(APIView):
             perfil_usuario = PerfilUsuario.objects.get(usuario=user)
             cliente = perfil_usuario.cliente
 
-            # Constrói o objeto de resposta com os dados completos do cliente
+            # Constroi o objeto de resposta com os dados completos do cliente
             user_data = {
                 "id": user.id,
                 "nome_completo": f"{user.first_name} {user.last_name}",
@@ -328,7 +328,7 @@ class UserProfileAPIView(APIView):
             }
             return Response(user_data, status=status.HTTP_200_OK)
         except PerfilUsuario.DoesNotExist:
-            return Response({"detail": "Perfil de usuário não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": "Perfil de usuario nao encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
 # No final de gestao_normas/views.py
 
@@ -348,7 +348,7 @@ class FavoritarNormaAPIView(APIView):
                 return Response({"status": "adicionada aos favoritos"}, status=status.HTTP_200_OK)
 
         except (Norma.DoesNotExist, PerfilUsuario.DoesNotExist):
-            return Response({"error": "Norma ou Perfil não encontrado"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Norma ou Perfil nao encontrado"}, status=status.HTTP_404_NOT_FOUND)
         
         # Em gestao_normas/views.py
 
@@ -369,16 +369,16 @@ class ComentarioListCreateAPIView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         try:
-            # PASSO 1: Encontrar a relação Norma-Cliente correta
+            # PASSO 1: Encontrar a relacao Norma-Cliente correta
             norma_pk = self.kwargs['norma_pk']
             cliente_do_usuario = request.user.perfilusuario.cliente
             norma_cliente = NormaCliente.objects.get(norma__pk=norma_pk, cliente=cliente_do_usuario)
 
-            # PASSO 2: Validar os dados do formulário (descrição, comentário)
+            # PASSO 2: Validar os dados do formulario (descricao, comentario)
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
 
-            # PASSO 3: Salvar o comentário, injetando o usuário e a norma_cliente
+            # PASSO 3: Salvar o comentario, injetando o usuario e a norma_cliente
             serializer.save(usuario=request.user, norma_cliente=norma_cliente)
 
             headers = self.get_success_headers(serializer.data)
@@ -386,19 +386,19 @@ class ComentarioListCreateAPIView(generics.ListCreateAPIView):
 
         except PerfilUsuario.DoesNotExist:
             return Response(
-                {"detail": "Não foi possível encontrar o perfil do seu usuário."},
+                {"detail": "Nao foi possivel encontrar o perfil do seu usuario."},
                 status=status.HTTP_400_BAD_REQUEST
             )
         except NormaCliente.DoesNotExist:
             return Response(
-                {"detail": "A relação entre esta Norma e o Cliente não existe. Associe-os no painel de administração primeiro."},
+                {"detail": "A relacao entre esta Norma e o Cliente nao existe. Associe-os no painel de administracao primeiro."},
                 status=status.HTTP_400_BAD_REQUEST
             )
         except Exception as e:
             # Para qualquer outro erro inesperado
-            print(f"Erro inesperado ao criar comentário: {e}")
+            print(f"Erro inesperado ao criar comentario: {e}")
             return Response(
-                {"detail": "Ocorreu um erro interno ao tentar salvar o comentário."},
+                {"detail": "Ocorreu um erro interno ao tentar salvar o comentario."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
         

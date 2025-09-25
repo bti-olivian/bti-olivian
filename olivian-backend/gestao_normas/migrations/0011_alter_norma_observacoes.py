@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='norma',
             name='observacoes',
-            field=models.TextField(blank=True, help_text='Observações internas sobre a norma.', max_length=200, null=True),
+            field=models.TextField(blank=True, help_text='Observacoes internas sobre a norma.', max_length=200, null=True),
         ),
     ]

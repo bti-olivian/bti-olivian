@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='norma',
             name='revisao_atual',
-            field=models.DateField(help_text='A versão da revisão atual, ex: 06/06/2000'),
+            field=models.DateField(help_text='A versao da revisao atual, ex: 06/06/2000'),
         ),
     ]
