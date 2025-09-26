@@ -25,6 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) { console.error(`Erro de conexão com ${url}:`, error); return null; }
     }
 
+    
+
     // --- FUNÇÕES DE RENDERIZAÇÃO E LÓGICA PRINCIPAL ---
     async function carregarDadosUsuario() {
         const profileData = await fetchData('http://127.0.0.1:8000/api/user/profile/');

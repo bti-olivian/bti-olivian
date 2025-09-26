@@ -212,3 +212,19 @@ class CentroDeCustoSerializer(serializers.ModelSerializer):
     class Meta:
         model = CentroDeCusto
         fields = ['id', 'nome', 'descricao', 'normas']
+
+# Adicionado para a tela de Acervo Técnico (Vínculos)
+class AuditoriaVinculadaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Auditoria
+        fields = ['nome', 'data_auditoria']
+
+class CertificacaoVinculadaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Certificacao
+        fields = ['nome', 'data_termino']
+
+class CentroDeCustoVinculadoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CentroDeCusto
+        fields = ['nome']

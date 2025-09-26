@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
     NormaListCreateView, NormaDetailView, ClienteListCreateView, UserRegistrationView,
     MinhasNormasListAPIView, GerenciarFuncionariosView, RevisaoSecundariaHistoricoCreateAPIView,
-    NotificacaoListAPIView, NotificacaoDetailAPIView, PasswordResetAPIView, PasswordResetConfirmAPIView, DashboardMetricsAPIView, UserProfileAPIView, FavoritarNormaAPIView, ComentarioListCreateAPIView, AuditoriaListCreateView, CertificacaoListCreateView, CentroDeCustoListCreateView, ComentarioDetailAPIView
+    NotificacaoListAPIView, NotificacaoDetailAPIView, PasswordResetAPIView, PasswordResetConfirmAPIView, DashboardMetricsAPIView, UserProfileAPIView, FavoritarNormaAPIView, ComentarioListCreateAPIView, AuditoriaListCreateView, CertificacaoListCreateView, CentroDeCustoListCreateView, ComentarioDetailAPIView, NormaVinculosView
 )
 
 urlpatterns = [
@@ -25,4 +25,5 @@ urlpatterns = [
     path('certificacoes/', CertificacaoListCreateView.as_view(), name='certificacoes-list-create'),
     path('centros-de-custo/', CentroDeCustoListCreateView.as_view(), name='centros-de-custo-list-create'),
     path('comentarios/<int:pk>/', ComentarioDetailAPIView.as_view(), name='comentario-detail'),
+    path('normas/<int:norma_id>/vinculos/', NormaVinculosView.as_view(), name='norma-vinculos'),
 ]

@@ -42,7 +42,10 @@ from .serializers import (
     ComentarioSerializer,
     AuditoriaSerializer,
     CertificacaoSerializer,
-    CentroDeCustoSerializer
+    CentroDeCustoSerializer,
+    AuditoriaVinculadaSerializer,
+    CertificacaoVinculadaSerializer,
+    CentroDeCustoVinculadoSerializer
 )
 
 class NormaListCreateView(generics.ListCreateAPIView):
@@ -439,3 +442,31 @@ class ComentarioDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ComentarioSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
+# Adicionado para a tela de Acervo Técnico (Vínculos)
+class NormaVinculosView(APIView):
+    """
+    View para listar auditorias, certificações e centros de custo
+    vinculados a uma norma específica para o cliente logado.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, norma_id, format=None):
+        if not hasattr(request.user, 'perfilusuario') or not request.user.perfilusuario.cliente:
+            return Response({"error": "Usuário não tem um cliente associado."}, status=400)
+            
+        cliente = request.user.perfilusuario.cliente
+        
+        # Filtra os itens pelo cliente E pelo ID da norma
+        auditorias = Auditoria.objects.filter(cliente=cliente, normas__id=norma_id)
+        certificacoes = Certificacao.objects.filter(cliente=cliente, normas__id=norma_id)
+        centros_de_custo = CentroDeCusto.objects.filter(cliente=cliente, normas__id=norma_id)
+
+        auditorias_data = AuditoriaVinculadaSerializer(auditorias, many=True).data
+        certificacoes_data = CertificacaoVinculadaSerializer(certificacoes, many=True).data
+        centros_de_custo_data = CentroDeCustoVinculadoSerializer(centros_de_custo, many=True).data
+
+        return Response({
+            'auditorias': auditorias_data,
+            'certificacoes': certificacoes_data,
+            'centros_de_custo': centros_de_custo_data,
+        })

@@ -532,8 +532,15 @@ h3 {
     color: #555;
 }
 
+/* --- Estilos para a lista de normas no popup --- */
 .popup-item .normas-list {
-    font-size: 0.8em;
-    font-style: italic;
-    color: #777;
+    margin-top: 8px;      /* Adiciona um espaço acima da lista */
+    padding-left: 20px;   /* Adiciona um recuo à esquerda para os bullets */
+    list-style-type: disc; /* Garante que os bullets sejam bolinhas */
+}
+
+.popup-item .normas-list li {
+    margin-bottom: 5px;   /* Adiciona um pequeno espaço entre os itens da lista */
+    font-size: 0.9em;     /* Deixa a fonte da norma um pouco menor que o título */
+    color: #555;          /* Um cinza escuro para a fonte */
 }
