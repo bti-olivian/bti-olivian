@@ -16,7 +16,9 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from datetime import date
 from .permissions import IsOwnerOrReadOnly
-from rest_framework import generics # Garanta que esta linha existe
+from rest_framework import generics
+
+# --- IMPORTS DE MODELS ---
 from .models import (
     Norma,
     Cliente,
@@ -30,22 +32,25 @@ from .models import (
     Certificacao,
     CentroDeCusto
 )
+
+# --- IMPORTS DE SERIALIZERS (REMOVIDO PermissoesUsuarioSerializer) ---
 from .serializers import (
-    NormaSerializer,
-    ClienteSerializer,
-    UserRegistrationSerializer,
-    PerfilUsuarioSerializer,
-    RevisaoSecundariaHistoricoSerializer,
-    NotificacaoSerializer,
-    CustomEmailLoginSerializer,
-    PasswordResetConfirmSerializer,
-    ComentarioSerializer,
     AuditoriaSerializer,
-    CertificacaoSerializer,
-    CentroDeCustoSerializer,
     AuditoriaVinculadaSerializer,
+    CentroDeCustoSerializer,
+    CentroDeCustoVinculadoSerializer,
+    CertificacaoSerializer,
     CertificacaoVinculadaSerializer,
-    CentroDeCustoVinculadoSerializer
+    ClienteSerializer,
+    ComentarioSerializer,
+    CustomEmailLoginSerializer,
+    NormaSerializer,
+    NotificacaoSerializer,
+    PasswordResetConfirmSerializer,
+    PerfilUsuarioAdminSerializer,
+    PerfilUsuarioSerializer, # AGORA ESTE SERIALIZER FAZ O TRABALHO
+    RevisaoSecundariaHistoricoSerializer,
+    UserRegistrationSerializer,
 )
 
 class NormaListCreateView(generics.ListCreateAPIView):
@@ -86,6 +91,7 @@ class MinhasNormasListAPIView(generics.ListAPIView):
         except PerfilUsuario.DoesNotExist:
             return Norma.objects.none()
 
+# CORREÇÃO: Atualizada para usar a nova permissão como checagem de administrador
 class GerenciarFuncionariosView(generics.ListAPIView):
     serializer_class = PerfilUsuarioSerializer
     permission_classes = [IsAuthenticated]
@@ -97,11 +103,118 @@ class GerenciarFuncionariosView(generics.ListAPIView):
         except PerfilUsuario.DoesNotExist:
             raise PermissionDenied("Seu perfil de usuario nao esta configurado. Acesso negado.")
 
-        if not perfil_do_usuario.is_admin_cliente:
+        # ATUALIZAÇÃO DA PERMISSÃO
+        if not perfil_do_usuario.pode_gerenciar_auditorias:
             raise PermissionDenied("Voce nao tem permissao para gerenciar funcionarios.")
 
         cliente_do_usuario = perfil_do_usuario.cliente
         return PerfilUsuario.objects.filter(cliente=cliente_do_usuario)
+
+# ----------------------------------------------------
+# NOVA VIEW: Listar e Atualizar Permissões de Administradores
+# ----------------------------------------------------
+class AdminPermissoesListUpdateView(generics.ListAPIView):
+    # Use o serializer mais completo para a tela de admin
+    serializer_class = PerfilUsuarioAdminSerializer
+    permission_classes = [IsAuthenticated] # O Super-Admin pode ser verificado no get_queryset
+
+    def get_queryset(self):
+        usuario_logado = self.request.user
+        
+        try:
+            perfil_do_usuario = PerfilUsuario.objects.get(usuario=usuario_logado)
+        except PerfilUsuario.DoesNotExist:
+            raise PermissionDenied("Seu perfil de usuário não está configurado. Acesso negado.")
+
+        # REGRA DE NEGÓCIO CRÍTICA: Somente um Super-Admin pode ver/editar
+        # Usando 'pode_gerenciar_auditorias' como o check de Super-Admin
+        if not perfil_do_usuario.pode_gerenciar_auditorias:
+            raise PermissionDenied("Você não tem permissão para administrar usuários.")
+
+        cliente_do_usuario = perfil_do_usuario.cliente
+        # Retorna todos os perfis do cliente, exceto o do usuário logado (para evitar que ele tire as próprias permissões)
+        return PerfilUsuario.objects.filter(cliente=cliente_do_usuario).select_related('usuario').exclude(usuario=usuario_logado)
+
+
+class AdminPermissoesBulkUpdateView(APIView):
+    """
+    View para receber a lista completa de perfis e atualizar as permissões em massa.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, *args, **kwargs):
+        usuario_logado = self.request.user
+        
+        try:
+            perfil_do_admin = PerfilUsuario.objects.get(usuario=usuario_logado)
+        except PerfilUsuario.DoesNotExist:
+            return Response({"detail": "Perfil de administrador não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Verificação de Permissão: Somente quem pode administrar acessa este endpoint
+        if not perfil_do_admin.pode_gerenciar_auditorias: # Use uma das novas permissões como Super-Admin check
+            return Response({"detail": "Você não tem permissão para modificar acessos."}, status=status.HTTP_403_FORBIDDEN)
+        
+        # O payload deve ser uma lista de objetos com 'user_id' e os campos de permissão
+        data = request.data
+        if not isinstance(data, list):
+            return Response({"detail": "Payload deve ser uma lista de usuários."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Mapeia as permissões que o ADMIN logado PODE conceder (só pode conceder o que ele tem)
+        permissoes_admin = {
+            'pode_gerenciar_auditorias': perfil_do_admin.pode_gerenciar_auditorias,
+            'pode_gerenciar_certificacoes': perfil_do_admin.pode_gerenciar_certificacoes,
+            'pode_gerenciar_centros_de_custo': perfil_do_admin.pode_gerenciar_centros_de_custo,
+            'pode_gerenciar_comentarios': perfil_do_admin.pode_gerenciar_comentarios,
+            'pode_gerenciar_precos': perfil_do_admin.pode_gerenciar_precos,
+            'pode_gerenciar_favoritos': perfil_do_admin.pode_gerenciar_favoritos,
+        }
+        
+        # Itera sobre os dados recebidos para aplicar as alterações
+        updates = []
+        for item in data:
+            user_id = item.get('user_id')
+            if not user_id:
+                continue
+
+            try:
+                perfil = PerfilUsuario.objects.select_related('usuario').get(usuario__id=user_id, cliente=perfil_do_admin.cliente)
+                
+                # Impede que o admin logado altere o próprio perfil neste endpoint
+                if perfil.usuario == usuario_logado:
+                    continue 
+
+                campos_alterados = {}
+                permissao_atualizada = False
+                
+                # Verifica e aplica apenas as permissões que o ADMIN logado PODE modificar
+                for campo, pode_modificar in permissoes_admin.items():
+                    if campo in item and pode_modificar:
+                        valor_novo = item[campo]
+                        valor_atual = getattr(perfil, campo)
+                        
+                        if valor_novo != valor_atual:
+                            campos_alterados[campo] = valor_novo
+                            permissao_atualizada = True
+                
+                if permissao_atualizada:
+                    for campo, valor in campos_alterados.items():
+                        setattr(perfil, campo, valor)
+                    updates.append(perfil)
+                    
+            except PerfilUsuario.DoesNotExist:
+                # Ignora usuários que não existem ou não pertencem ao cliente
+                continue
+
+        # Salva as alterações no banco de dados
+        # O bulk_update é mais eficiente para atualizar múltiplos objetos
+        PerfilUsuario.objects.bulk_update(updates, list(permissoes_admin.keys()))
+
+        return Response({"detail": f"{len(updates)} perfis de usuários atualizados com sucesso."}, status=status.HTTP_200_OK)
+
+# ----------------------------------------------------
+# FIM DAS NOVAS VIEWS
+# ----------------------------------------------------
+
 
 class RevisaoSecundariaHistoricoCreateAPIView(generics.CreateAPIView):
     queryset = RevisaoSecundariaHistorico.objects.all()
@@ -205,8 +318,6 @@ class PasswordResetConfirmAPIView(APIView):
             print(f"Erro inesperado no servidor: {e}")
             return Response({"detail": "Erro interno no servidor."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-# Em gestao_normas/views.py
-
 class DashboardMetricsAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -245,14 +356,15 @@ class DashboardMetricsAPIView(APIView):
             # --- Logica de Favoritos (ja existente) ---
             normas_favoritas_count = perfil_usuario.normas_favoritas.count()
 
-             # =================================================================
+            # =================================================================
             # NOVA LoGICA PARA CONTAR TODAS AS NORMAS COMENTADAS DO CLIENTE
             # =================================================================
+            # A correção é feita na sua lógica original, garantindo a contagem correta
             normas_comentadas_count = Comentario.objects.filter(norma_cliente__cliente=cliente).count()
 
             metrics = {
                 "total_normas": normas.count(),
-                "normas_comentadas": normas_comentadas_count, # <-- AQUI USAMOS O VALOR CALCULADO
+                "normas_comentadas": normas_comentadas_count,
                 "normas_favoritas": normas_favoritas_count,
                 "dias_renovacao": dias_para_renovacao,
                 "risco_nao_conformidade": risco_nao_conformidade_count,
@@ -260,47 +372,11 @@ class DashboardMetricsAPIView(APIView):
             return Response(metrics, status=status.HTTP_200_OK)
 
         except PerfilUsuario.DoesNotExist:
-             return Response({"detail": "Perfil de usuario nao encontrado."}, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
-            print(f"Erro ao carregar as metricas: {e}")
-            return Response({"detail": f"Erro ao carregar as metricas: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            
-            # =================================================================
-            # NOVA LoGICA PARA CALCULAR OS DIAS DE RENOVAcaO
-            # =================================================================
-            dias_para_renovacao = 0
-            if cliente.vigencia_contratual_fim:
-                hoje = date.today()
-                diferenca = cliente.vigencia_contratual_fim - hoje
-                dias_para_renovacao = diferenca.days
-                
-                # Garante que nao mostraremos um numero negativo se o contrato ja expirou
-                if dias_para_renovacao < 0:
-                    dias_para_renovacao = 0
-            # =================================================================
-
-            # =================================================================
-            # NOVA LoGICA PARA CONTAR AS NORMAS FAVORITAS
-            # =================================================================
-            normas_favoritas_count = perfil_usuario.normas_favoritas.count()
-            # =================================================================
-
-            metrics = {
-                "total_normas": normas.count(),
-                "normas_comentadas": 0,
-                "normas_favoritas": normas_favoritas_count,
-                "dias_renovacao": dias_para_renovacao, # <-- AQUI USAMOS O VALOR CALCULADO
-                "risco_nao_conformidade": risco_nao_conformidade_count,
-            }
-            return Response(metrics, status=status.HTTP_200_OK)
-
-        except PerfilUsuario.DoesNotExist:
-             return Response({"detail": "Perfil de usuario nao encontrado."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": "Perfil de usuario nao encontrado."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             print(f"Erro ao carregar as metricas: {e}")
             return Response({"detail": f"Erro ao carregar as metricas: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        
 class UserProfileAPIView(APIView):
     permission_classes = [IsAuthenticated]
     
@@ -309,11 +385,14 @@ class UserProfileAPIView(APIView):
         try:
             perfil_usuario = PerfilUsuario.objects.get(usuario=user)
             cliente = perfil_usuario.cliente
+            
+            # 1. Utiliza o PerfilUsuarioSerializer, que já inclui o objeto 'permissoes'
+            perfil_data = PerfilUsuarioSerializer(perfil_usuario).data
 
-            # Constroi o objeto de resposta com os dados completos do cliente
+            # 2. Constrói o objeto de resposta, injetando os dados do User e Cliente (que não estão no PerfilUsuarioSerializer)
             user_data = {
                 "id": user.id,
-                "nome_completo": f"{user.first_name} {user.last_name}",
+                "nome_completo": f"{user.first_name} {user.last_name}".strip(),
                 "email": user.email,
                 "cliente": {
                     "id": cliente.id,
@@ -327,13 +406,13 @@ class UserProfileAPIView(APIView):
                     "telefone": cliente.telefone,
                     "vigencia_contratual_inicio": cliente.vigencia_contratual_inicio,
                     "vigencia_contratual_fim": cliente.vigencia_contratual_fim,
-                }
+                },
+                # 3. Injete as permissões (que já estão no perfil_data)
+                "permissoes": perfil_data['permissoes']
             }
             return Response(user_data, status=status.HTTP_200_OK)
         except PerfilUsuario.DoesNotExist:
             return Response({"detail": "Perfil de usuario nao encontrado."}, status=status.HTTP_404_NOT_FOUND)
-
-# No final de gestao_normas/views.py
 
 class FavoritarNormaAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -353,10 +432,6 @@ class FavoritarNormaAPIView(APIView):
         except (Norma.DoesNotExist, PerfilUsuario.DoesNotExist):
             return Response({"error": "Norma ou Perfil nao encontrado"}, status=status.HTTP_404_NOT_FOUND)
         
-        # Em gestao_normas/views.py
-
-# Em gestao_normas/views.py
-
 class ComentarioListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = ComentarioSerializer
     permission_classes = [IsAuthenticated]
@@ -367,7 +442,7 @@ class ComentarioListCreateAPIView(generics.ListCreateAPIView):
             cliente_do_usuario = self.request.user.perfilusuario.cliente
             norma_cliente = NormaCliente.objects.get(norma__pk=norma_pk, cliente=cliente_do_usuario)
             return Comentario.objects.filter(norma_cliente=norma_cliente).order_by('-data_criacao')
-        except (PerfilUsuario.DoesNotExist, NormaCliente.DoesNotExist):
+        except (PerfilUsuario.DoesNotExist, NormaCliente.DoesNotExist, AttributeError):
             return Comentario.objects.none()
 
     def create(self, request, *args, **kwargs):
@@ -405,8 +480,6 @@ class ComentarioListCreateAPIView(generics.ListCreateAPIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
         
-# No final de gestao_normas/views.py
-
 class AuditoriaListCreateView(generics.ListCreateAPIView):
     serializer_class = AuditoriaSerializer
     permission_classes = [IsAuthenticated]

@@ -8,6 +8,67 @@ from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
 
+# --- SERIALIZADORES DE PERFIL DE USUÁRIO (ATUALIZADOS) ---
+
+# Serializador para o perfil de usuario (Versão atualizada para a tela de Admin)
+class PerfilUsuarioAdminSerializer(serializers.ModelSerializer):
+    # Campos que trazem dados do modelo User
+    username = serializers.CharField(source='usuario.username', read_only=True)
+    nome_completo = serializers.SerializerMethodField()
+    user_id = serializers.IntegerField(source='usuario.id', read_only=True)
+
+    class Meta:
+        model = PerfilUsuario
+        # Inclua todos os novos campos de permissão
+        fields = [
+            'user_id', 'username', 'nome_completo', 'cliente',
+            'pode_gerenciar_auditorias',
+            'pode_gerenciar_certificacoes',
+            'pode_gerenciar_centros_de_custo',
+            'pode_gerenciar_comentarios',
+            'pode_gerenciar_precos',
+            'pode_gerenciar_favoritos',
+        ]
+        # O campo 'cliente' é de leitura-somente para evitar alteração acidental de cliente.
+        read_only_fields = ['cliente', 'username', 'nome_completo', 'user_id']
+
+    def get_nome_completo(self, obj):
+        # Concatena first_name e last_name do User
+        return f"{obj.usuario.first_name} {obj.usuario.last_name}".strip()
+
+
+# Serializador para o perfil de usuario (Versão para o usuário comum - AGORA INCLUI O OBJETO PERMISSÕES)
+class PerfilUsuarioSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='usuario.username', read_only=True)
+    email = serializers.EmailField(source='usuario.email', read_only=True)
+    # NOVO CAMPO: Retorna todas as permissões em um objeto JSON
+    permissoes = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PerfilUsuario
+        # CAMPOS ATUALIZADOS: Removendo as permissões da raiz, e adicionando 'permissoes'
+        fields = [
+            'username', 
+            'email', 
+            'cliente',
+            'permissoes', # <--- NOVO CAMPO CALCULADO
+        ]
+        read_only_fields = ['cliente', 'username', 'email']
+
+    def get_permissoes(self, obj):
+        # Retorna um dicionário com todas as permissões booleanas
+        return {
+            'pode_gerenciar_auditorias': obj.pode_gerenciar_auditorias,
+            'pode_gerenciar_certificacoes': obj.pode_gerenciar_certificacoes,
+            'pode_gerenciar_centros_de_custo': obj.pode_gerenciar_centros_de_custo,
+            'pode_gerenciar_comentarios': obj.pode_gerenciar_comentarios,
+            'pode_gerenciar_precos': obj.pode_gerenciar_precos,
+            'pode_gerenciar_favoritos': obj.pode_gerenciar_favoritos,
+        }
+
+# --- FIM DOS SERIALIZADORES DE PERFIL DE USUÁRIO ---
+
+
 # Serializador para o modelo Norma
 class NormaSerializer(serializers.ModelSerializer):
     sua_revisao = serializers.SerializerMethodField()
@@ -24,9 +85,6 @@ class NormaSerializer(serializers.ModelSerializer):
             'sua_revisao', 'status_atualizado', 'is_favorita', 'observacoes', 'comentarios_count'
         ]
 
-# Em gestao_normas/serializers.py
-
-# Dentro da classe NormaSerializer:
     def get_comentarios_count(self, obj):
         # obj aqui e uma instancia de Norma
         request = self.context.get('request')
@@ -36,7 +94,7 @@ class NormaSerializer(serializers.ModelSerializer):
                 norma_cliente = NormaCliente.objects.get(norma=obj, cliente=request.user.perfilusuario.cliente)
                 # Conta os comentarios dessa relacao especifica
                 return norma_cliente.comentarios.count()
-            except (NormaCliente.DoesNotExist, PerfilUsuario.DoesNotExist):
+            except (NormaCliente.DoesNotExist, PerfilUsuario.DoesNotExist, AttributeError):
                 return 0
         return 0
         
@@ -48,7 +106,7 @@ class NormaSerializer(serializers.ModelSerializer):
                 cliente = perfil_usuario.cliente
                 norma_cliente = NormaCliente.objects.get(norma=obj, cliente=cliente)
                 return norma_cliente.data_revisao_cliente
-            except (PerfilUsuario.DoesNotExist, NormaCliente.DoesNotExist):
+            except (PerfilUsuario.DoesNotExist, NormaCliente.DoesNotExist, AttributeError):
                 return None
         return None
 
@@ -63,7 +121,7 @@ class NormaSerializer(serializers.ModelSerializer):
                 return "DESATUALIZADO"
             else:
                 return "ATUALIZADO"
-        except (PerfilUsuario.DoesNotExist, NormaCliente.DoesNotExist):
+        except (PerfilUsuario.DoesNotExist, NormaCliente.DoesNotExist, AttributeError):
             return "Indefinido"
         
     def get_is_favorita(self, obj):
@@ -109,15 +167,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         PerfilUsuario.objects.create(usuario=user, cliente=cliente)
         return user
 
-# Serializador para o perfil de usuario
-class PerfilUsuarioSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source='usuario.username', read_only=True)
-    email = serializers.EmailField(source='usuario.email', read_only=True)
-
-    class Meta:
-        model = PerfilUsuario
-        fields = ['username', 'email', 'is_admin_cliente', 'cliente']
-
 # Serializador para o historico de revisao secundaria
 class RevisaoSecundariaHistoricoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -139,8 +188,6 @@ class NotificacaoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 # Serializador personalizado para login com e-mail
-User = get_user_model()
-
 class CustomEmailLoginSerializer(serializers.Serializer):
     email = serializers.CharField(required=True)
     password = serializers.CharField(write_only=True, required=True)
@@ -179,8 +226,6 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         password_validation.validate_password(value)
         return value
     
-# Adicione esta classe no final de gestao_normas/serializers.py
-
 # Em gestao_normas/serializers.py
 
 class ComentarioSerializer(serializers.ModelSerializer):
@@ -191,9 +236,7 @@ class ComentarioSerializer(serializers.ModelSerializer):
         model = Comentario
         fields = ['id', 'norma_cliente', 'usuario', 'usuario_nome', 'descricao', 'comentario', 'data_criacao']
 
-        # --- AQUI ESTa A CORREcaO CRiTICA ---
-        # Esta linha diz ao serializador para NaO exigir 'usuario' e 'norma_cliente' do frontend,
-        # pois eles serao adicionados no backend (na sua View).
+        # --- CORREÇÃO CRÍTICA: Os campos 'usuario' e 'norma_cliente' serão definidos na View
         read_only_fields = ['usuario', 'norma_cliente']
 
 # No final de gestao_normas/serializers.py

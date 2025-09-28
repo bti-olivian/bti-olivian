@@ -40,6 +40,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
         };
 
         try {
+            // Se estiver usando o CustomEmailLoginSerializer, a rota pode ser '/api/login/'
+            // Se estiver usando o TokenObtainPairView padrão, a rota é '/api/token/'
             const response = await fetch('http://127.0.0.1:8000/api/token/', {
                 method: 'POST',
                 headers: {
@@ -50,8 +52,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
             
             if (response.ok) {
                 const data = await response.json();
-                localStorage.setItem('accessToken', data.access);
-                localStorage.setItem('refreshToken', data.refresh);
+                
+                // MUDANÇA CRÍTICA: Padronizando a chave para 'access' (minúscula)
+                localStorage.setItem('access', data.access); 
+                localStorage.setItem('refresh', data.refresh); // Mantendo o refresh por boa prática
                 
                 // Redireciona imediatamente após o sucesso
                 window.location.href = '/olivian-frontend/acervo_tecnico/acervo_tecnico.html';
