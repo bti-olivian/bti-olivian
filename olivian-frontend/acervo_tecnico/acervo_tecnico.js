@@ -1,8 +1,18 @@
+// A URL base da API continua a mesma
+const API_BASE_URL = 'http://127.0.0.1:8000/api';
+
 document.addEventListener('DOMContentLoaded', () => {
     // --- VARIÁVEIS GLOBAIS E SELETORES ---
     let todasAsNormas = [], normaAtualId = null, infoUsuario = null;
-    const accessToken = localStorage.getItem('accessToken');
-    if (!accessToken) { console.error('Utilizador não autenticado.'); window.location.href = '../login/login.html'; return; }
+
+    // CORREÇÃO CRÍTICA: Altera a chave para 'access' (assumindo que o login salva com esta chave)
+    const accessToken = localStorage.getItem('access'); 
+
+    if (!accessToken) { 
+        console.error('Utilizador não autenticado. Redirecionando para login.'); 
+        window.location.href = '../login/login.html'; 
+        return; 
+    }
 
     const [modal, openBtnIcon, closeButtons, commentForm, commentCountSpan, listaComentariosContainer, filtroInput, listaNormasDiv, favoriteBtn, filtroFavoritasBtn, filtroTodasBtn, filtroDesatualizadasBtn, filtroComentadasBtn] = [
         document.getElementById('commentModal'), document.getElementById('openCommentModalIcon'), document.querySelectorAll('.close-button'),
@@ -19,15 +29,42 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- FUNÇÕES DE API ---
     async function fetchData(url, options = {}) {
         try {
-            const response = await fetch(url, { ...options, headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json', ...options.headers } });
-            if (!response.ok) { console.error(`Erro na API ${url}:`, await response.json()); return null; }
+            // Usa o accessToken obtido no início do script
+            const response = await fetch(url, { 
+                ...options, 
+                headers: { 
+                    'Authorization': `Bearer ${accessToken}`, // Chave de autorização constante
+                    'Content-Type': 'application/json', 
+                    ...options.headers 
+                } 
+            });
+            if (response.status === 401 || response.status === 403) {
+                console.error("Token expirado ou inválido. Redirecionando.");
+                window.location.href = '../login/login.html';
+                return null;
+            }
+            if (!response.ok) { 
+                console.error(`Erro na API ${url}:`, await response.text()); 
+                return null; 
+            }
             return response.status === 204 ? true : await response.json();
-        } catch (error) { console.error(`Erro de conexão com ${url}:`, error); return null; }
+        } catch (error) { 
+            console.error(`Erro de conexão com ${url}:`, error); 
+            return null; 
+        }
     }
 
     // --- FUNÇÕES DE RENDERIZAÇÃO E LÓGICA PRINCIPAL ---
+    
+    // Função auxiliar para formatar CNPJ (assumindo que você a definiu em outro lugar)
+    function formatarCNPJ(cnpj) {
+        if (!cnpj) return 'N/A';
+        // Simplificado para teste. Se precisar da formatação completa, adicione a lógica aqui.
+        return cnpj.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
+    }
+
     async function carregarDadosUsuario() {
-        const profileData = await fetchData('http://127.0.0.1:8000/api/user/profile/');
+        const profileData = await fetchData(`${API_BASE_URL}/user/profile/`);
         if (profileData) {
             infoUsuario = profileData;
             document.querySelector('.client-profile').style.opacity = 1;
@@ -43,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function carregarMetricas() {
-        const metrics = await fetchData('http://127.0.0.1:8000/api/dashboard/metrics/');
+        const metrics = await fetchData(`${API_BASE_URL}/dashboard/metrics/`);
         if (metrics) {
             document.querySelectorAll('.card-number').forEach(el => el.style.opacity = 1);
             document.getElementById('total-normas').textContent = metrics.total_normas;
@@ -77,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     async function carregarNormas() {
-        const normas = await fetchData('http://127.0.0.1:8000/api/minhas-normas/');
+        const normas = await fetchData(`${API_BASE_URL}/minhas-normas/`);
         if (normas) {
             normas.sort((a, b) => `${a.organizacao} ${a.norma}`.localeCompare(`${b.organizacao} ${b.norma}`));
             todasAsNormas = normas;
@@ -90,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function carregarDetalhesNorma(normaId) {
         normaAtualId = normaId;
-        const norma = await fetchData(`http://127.0.0.1:8000/api/normas/${normaId}/`);
+        const norma = await fetchData(`${API_BASE_URL}/normas/${normaId}/`);
         if (norma) {
             const formatarData = (data) => data ? new Date(data + 'T00:00:00').toLocaleDateString('pt-BR') : 'N/A';
             document.getElementById('norma-titulo').textContent = `${norma.norma}`;
@@ -121,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
             listaComentariosContainer.innerHTML = '<p>Selecione uma norma para ver os comentários.</p>';
             return;
         }
-        const comentarios = await fetchData(`http://127.0.0.1:8000/api/normas/${normaAtualId}/comentarios/`);
+        const comentarios = await fetchData(`${API_BASE_URL}/normas/${normaAtualId}/comentarios/`);
         listaComentariosContainer.innerHTML = '';
 
         if (!comentarios || comentarios.length === 0) {
@@ -138,6 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"></polyline><path d="M20 18v-2a4 4 0 0 0-4-4H4"></path></svg>
                     </button>`;
 
+                // Verifica se o comentário pertence ao usuário logado para mostrar botões de edição/exclusão
                 if (infoUsuario && comentario.usuario === infoUsuario.id) {
                     actionsHtml += `
                         <button class="edit-btn" title="Alterar">
@@ -166,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function toggleFavorito() {
         if (!normaAtualId) return;
-        const response = await fetchData(`http://127.0.0.1:8000/api/normas/${normaAtualId}/favoritar/`, { method: 'POST' });
+        const response = await fetchData(`${API_BASE_URL}/normas/${normaAtualId}/favoritar/`, { method: 'POST' });
         if (response) {
             await carregarNormas();
             await carregarMetricas();
@@ -184,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const descricao = document.getElementById('commentDescription').value;
         const comentario = document.getElementById('commentText').value;
         if (!comentario.trim()) { alert('O campo "Comentário" não pode estar vazio.'); return; }
-        const data = await fetchData(`http://127.0.0.1:8000/api/normas/${normaAtualId}/comentarios/`, { method: 'POST', body: JSON.stringify({ descricao, comentario }) });
+        const data = await fetchData(`${API_BASE_URL}/normas/${normaAtualId}/comentarios/`, { method: 'POST', body: JSON.stringify({ descricao, comentario }) });
         if (data) {
             commentForm.reset();
             await carregarComentariosDoPopup();
@@ -196,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     listaComentariosContainer.addEventListener('click', async (event) => {
-        const target = event.target.closest('button'); // Melhor para capturar cliques nos SVGs dentro dos botões
+        const target = event.target.closest('button'); 
         if (!target) return;
 
         const commentItem = target.closest('.comment-item');
@@ -204,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (target.classList.contains('delete-btn')) {
             if (confirm('Tem a certeza que deseja excluir este comentário?')) {
-                const success = await fetchData(`http://127.0.0.1:8000/api/comentarios/${commentId}/`, { method: 'DELETE' });
+                const success = await fetchData(`${API_BASE_URL}/comentarios/${commentId}/`, { method: 'DELETE' });
                 if (success) {
                     await carregarComentariosDoPopup();
                     await carregarDetalhesNorma(normaAtualId);

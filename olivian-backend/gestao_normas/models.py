@@ -58,10 +58,23 @@ class NormaCliente(models.Model):
         return f"Revisao da Norma '{self.norma.norma}' para o Cliente '{self.cliente.empresa}'"
 
 # MODELO 4: O PERFIL DO USUARIO DO CLIENTE
+# Certifique-se de que os imports necessários (User, Cliente, Norma)
+# estão presentes no topo do seu arquivo models.py
+
+# MODELO 4: O PERFIL DO USUARIO DO CLIENTE
 class PerfilUsuario(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE)
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
-    is_admin_cliente = models.BooleanField(default=False)
+    
+    # NOVAS PERMISSÕES DE GERENCIAMENTO (Substituindo o antigo 'is_admin_cliente')
+    pode_gerenciar_auditorias = models.BooleanField(default=False)
+    pode_gerenciar_certificacoes = models.BooleanField(default=False)
+    pode_gerenciar_centros_de_custo = models.BooleanField(default=False)
+    pode_gerenciar_comentarios = models.BooleanField(default=False)
+    pode_gerenciar_precos = models.BooleanField(default=False) 
+    pode_gerenciar_favoritos = models.BooleanField(default=False)
+    
+    # Campo para normas favoritas, mantido como estava
     normas_favoritas = models.ManyToManyField(Norma, blank=True, related_name='favoritado_por')
 
     def __str__(self):
