@@ -14,11 +14,13 @@ SECRET_KEY = 'django-insecure-#j1%pi^)__#(11-0gz124$6!n5%-k1$_&zf-%%*#!r3h@d5@xh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# Permite acesso via localhost e IP do loopback
+# Se for testar de outro dispositivo (celular, etc.), adicione o IP da sua máquina aqui.
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 # Application definition
 INSTALLED_APPS = [
-    'corsheaders',
+    'corsheaders', # Necessário para o CORS
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -31,7 +33,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    # O CorsMiddleware DEVE ser o PRIMEIRO para aplicar os cabeçalhos.
+    'corsheaders.middleware.CorsMiddleware', 
+    
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -103,6 +107,40 @@ STATIC_URL = 'static/'
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# -----------------------------------------------------------
+# --- CONFIGURAÇÕES DE CORS E CSRF (CORRIGIDAS) ---
+# -----------------------------------------------------------
+
+# Portas do frontend (baseado no seu console: 5500)
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5500", 
+    "http://127.0.0.1:5500", 
+]
+
+# Permite o envio de credenciais (necessário para cabeçalhos de Autorização/JWT)
+CORS_ALLOW_CREDENTIALS = True 
+
+# Permite os cabeçalhos necessários para o JWT e requisições POST
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization', # Essencial para o JWT
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+# Informa ao Django que o CSRF deve confiar nessas origens para não bloquear POST/PUT
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5500", 
+    "http://127.0.0.1:5500", 
+]
+
+# -----------------------------------------------------------
+
 # Configuracao do Django REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -121,19 +159,5 @@ SIMPLE_JWT = {
     'USER_ID_CLAIM': 'user_id',
 }
 
-# Configuracao do CORS
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-    "http://localhost:5501", # Seu frontend
-    "http://127.0.0.1:5501", # Seu frontend
-]
-
-# normas_backend/settings.py
-
-# ... (outras configuracoes) ...
-
 # Configuracoes de e-mail para desenvolvimento
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-CORS_ALLOW_ALL_ORIGINS = True
