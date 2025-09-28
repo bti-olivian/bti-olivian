@@ -17,7 +17,7 @@ class NormaSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Norma
-        # A API de detalhes usará apenas esses campos.
+        # A API de detalhes usara apenas esses campos.
         fields = [
             'id', 'organizacao', 'norma', 'titulo', 'revisao_atual', 
             'idioma', 'formato', 
@@ -28,13 +28,13 @@ class NormaSerializer(serializers.ModelSerializer):
 
 # Dentro da classe NormaSerializer:
     def get_comentarios_count(self, obj):
-        # obj aqui é uma instância de Norma
+        # obj aqui e uma instancia de Norma
         request = self.context.get('request')
         if request and hasattr(request, "user") and request.user.is_authenticated:
             try:
-                # Encontra a relação NormaCliente para a norma atual e o usuário logado
+                # Encontra a relacao NormaCliente para a norma atual e o usuario logado
                 norma_cliente = NormaCliente.objects.get(norma=obj, cliente=request.user.perfilusuario.cliente)
-                # Conta os comentários dessa relação específica
+                # Conta os comentarios dessa relacao especifica
                 return norma_cliente.comentarios.count()
             except (NormaCliente.DoesNotExist, PerfilUsuario.DoesNotExist):
                 return 0
@@ -84,7 +84,7 @@ class ClienteSerializer(serializers.ModelSerializer):
         model = Cliente
         fields = '__all__'
 
-# Serializador para o registro de usuário
+# Serializador para o registro de usuario
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     
@@ -98,7 +98,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         try:
             cliente = Cliente.objects.get(dominio=dominio)
         except Cliente.DoesNotExist:
-            raise serializers.ValidationError({"email": "O domínio de e-mail não pertence a um cliente cadastrado."})
+            raise serializers.ValidationError({"email": "O dominio de e-mail nao pertence a um cliente cadastrado."})
 
         user = User.objects.create_user(
             username=email, 
@@ -109,7 +109,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         PerfilUsuario.objects.create(usuario=user, cliente=cliente)
         return user
 
-# Serializador para o perfil de usuário
+# Serializador para o perfil de usuario
 class PerfilUsuarioSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='usuario.username', read_only=True)
     email = serializers.EmailField(source='usuario.email', read_only=True)
@@ -118,7 +118,7 @@ class PerfilUsuarioSerializer(serializers.ModelSerializer):
         model = PerfilUsuario
         fields = ['username', 'email', 'is_admin_cliente', 'cliente']
 
-# Serializador para o histórico de revisão secundária
+# Serializador para o historico de revisao secundaria
 class RevisaoSecundariaHistoricoSerializer(serializers.ModelSerializer):
     class Meta:
         model = RevisaoSecundariaHistorico
@@ -154,11 +154,11 @@ class CustomEmailLoginSerializer(serializers.Serializer):
             try:
                 user = User.objects.get(email__iexact=email)
                 if not user.check_password(password):
-                    raise serializers.ValidationError("Não há conta ativa com as credenciais fornecidas.")
+                    raise serializers.ValidationError("Nao ha conta ativa com as credenciais fornecidas.")
             except User.DoesNotExist:
-                raise serializers.ValidationError("Não há conta ativa com as credenciais fornecidas.")
+                raise serializers.ValidationError("Nao ha conta ativa com as credenciais fornecidas.")
         else:
-            raise serializers.ValidationError("E-mail e senha são campos obrigatórios.")
+            raise serializers.ValidationError("E-mail e senha sao campos obrigatorios.")
         
         refresh = RefreshToken.for_user(user)
         return {
@@ -184,16 +184,16 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
 # Em gestao_normas/serializers.py
 
 class ComentarioSerializer(serializers.ModelSerializer):
-    # Traz o nome do usuário que fez o comentário (apenas para leitura)
+    # Traz o nome do usuario que fez o comentario (apenas para leitura)
     usuario_nome = serializers.CharField(source='usuario.get_full_name', read_only=True)
 
     class Meta:
         model = Comentario
         fields = ['id', 'norma_cliente', 'usuario', 'usuario_nome', 'descricao', 'comentario', 'data_criacao']
 
-        # --- AQUI ESTÁ A CORREÇÃO CRÍTICA ---
-        # Esta linha diz ao serializador para NÃO exigir 'usuario' e 'norma_cliente' do frontend,
-        # pois eles serão adicionados no backend (na sua View).
+        # --- AQUI ESTa A CORREcaO CRiTICA ---
+        # Esta linha diz ao serializador para NaO exigir 'usuario' e 'norma_cliente' do frontend,
+        # pois eles serao adicionados no backend (na sua View).
         read_only_fields = ['usuario', 'norma_cliente']
 
 # No final de gestao_normas/serializers.py

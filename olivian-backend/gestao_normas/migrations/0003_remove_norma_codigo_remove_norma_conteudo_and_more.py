@@ -35,12 +35,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='norma',
             name='idioma',
-            field=models.CharField(choices=[('ingles', 'Inglês'), ('portugues', 'Português')], default='portugues', max_length=20),
+            field=models.CharField(choices=[('ingles', 'Ingles'), ('portugues', 'Portugues')], default='portugues', max_length=20),
         ),
         migrations.AddField(
             model_name='norma',
             name='norma',
-            field=models.CharField(default='N/A', help_text='O número ou código da norma, ex: GMW3059', max_length=50, unique=True),
+            field=models.CharField(default='N/A', help_text='O numero ou codigo da norma, ex: GMW3059', max_length=50, unique=True),
         ),
         migrations.AddField(
             model_name='norma',
@@ -50,17 +50,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='norma',
             name='revisao_atual',
-            field=models.CharField(default='N/A', help_text='A versão da revisão atual, ex: 06/06/2000', max_length=50),
+            field=models.CharField(default='N/A', help_text='A versao da revisao atual, ex: 06/06/2000', max_length=50),
         ),
         migrations.AlterField(
             model_name='cliente',
             name='cep',
-            field=models.CharField(help_text='Somente números', max_length=9),
+            field=models.CharField(help_text='Somente numeros', max_length=9),
         ),
         migrations.AlterField(
             model_name='cliente',
             name='cnpj',
-            field=models.CharField(help_text='Somente números', max_length=18, unique=True),
+            field=models.CharField(help_text='Somente numeros', max_length=18, unique=True),
         ),
         migrations.AlterField(
             model_name='cliente',
@@ -75,7 +75,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='cliente',
             name='telefone',
-            field=models.CharField(help_text='Somente números (incluir DDD)', max_length=15),
+            field=models.CharField(help_text='Somente numeros (incluir DDD)', max_length=15),
         ),
         migrations.AlterField(
             model_name='norma',
@@ -86,7 +86,7 @@ class Migration(migrations.Migration):
             name='RevisaoSecundariaHistorico',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('tipo_revisao', models.CharField(choices=[('errata', 'Errata'), ('reafirmacao', 'Reafirmação'), ('ammendment', 'Ammendment')], max_length=50)),
+                ('tipo_revisao', models.CharField(choices=[('errata', 'Errata'), ('reafirmacao', 'Reafirmacao'), ('ammendment', 'Ammendment')], max_length=50)),
                 ('data', models.DateField()),
                 ('norma', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='gestao_normas.norma')),
             ],

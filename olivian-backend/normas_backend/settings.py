@@ -3,7 +3,7 @@ Django settings for normas_backend project.
 """
 
 from pathlib import Path
-from datetime import timedelta # Importe o timedelta para a configuração do JWT
+from datetime import timedelta # Importe o timedelta para a configuracao do JWT
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -103,14 +103,14 @@ STATIC_URL = 'static/'
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Configuração do Django REST Framework
+# Configuracao do Django REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
 
-# Configuração do django-rest-framework-simplejwt
+# Configuracao do django-rest-framework-simplejwt
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
@@ -121,7 +121,7 @@ SIMPLE_JWT = {
     'USER_ID_CLAIM': 'user_id',
 }
 
-# Configuração do CORS
+# Configuracao do CORS
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://127.0.0.1:8000",
@@ -131,9 +131,9 @@ CORS_ALLOWED_ORIGINS = [
 
 # normas_backend/settings.py
 
-# ... (outras configurações) ...
+# ... (outras configuracoes) ...
 
-# Configurações de e-mail para desenvolvimento
+# Configuracoes de e-mail para desenvolvimento
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 CORS_ALLOW_ALL_ORIGINS = True

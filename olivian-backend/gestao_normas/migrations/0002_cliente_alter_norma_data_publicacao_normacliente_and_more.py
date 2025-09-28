@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('empresa', models.CharField(help_text='Nome da empresa.', max_length=200)),
                 ('cnpj', models.CharField(help_text='Formato: 99.999.999/9999-99', max_length=18, unique=True)),
                 ('dominio', models.CharField(help_text='Ex: google.com', max_length=100)),
-                ('endereco', models.CharField(help_text='Rua e número.', max_length=200)),
+                ('endereco', models.CharField(help_text='Rua e numero.', max_length=200)),
                 ('cidade', models.CharField(max_length=100)),
                 ('estado', models.CharField(max_length=2)),
                 ('pais', models.CharField(max_length=50)),
@@ -32,13 +32,13 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='norma',
             name='data_publicacao',
-            field=models.DateField(help_text='Data oficial de publicação da norma.'),
+            field=models.DateField(help_text='Data oficial de publicacao da norma.'),
         ),
         migrations.CreateModel(
             name='NormaCliente',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('data_revisao_cliente', models.DateField(help_text='Data da última revisão desta norma no cliente.')),
+                ('data_revisao_cliente', models.DateField(help_text='Data da ultima revisao desta norma no cliente.')),
                 ('cliente', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='gestao_normas.cliente')),
                 ('norma', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='gestao_normas.norma')),
             ],
