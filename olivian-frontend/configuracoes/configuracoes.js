@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const accessToken = localStorage.getItem('accessToken');
+    // CORRIGIDO: Agora verifica a chave 'access' para ser consistente com o resto da aplicação.
+    const accessToken = localStorage.getItem('access');
+    
     if (!accessToken) {
         console.error('Usuário não autenticado.');
         window.location.href = '../login/login.html';
@@ -47,16 +49,26 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchData(url) {
         try {
             const response = await fetch(url, { headers: { 'Authorization': `Bearer ${accessToken}` } });
+            
             if (response.ok) return await response.json();
             
-            if (response.status === 401) {
-                alert('Sua sessão expirou. Por favor, faça o login novamente.');
-                localStorage.removeItem('accessToken');
+            // --- TRATAMENTO DE ERROS CORRIGIDO ---
+            if (response.status === 401 || response.status === 403) {
+                // Erros de Autenticação/Sessão Expirada: Redireciona para o login
+                alert('Sua sessão expirou ou não tem permissão. Por favor, faça o login novamente.');
+                // ALERTA: Removendo o token 'access'
+                localStorage.removeItem('access'); 
                 window.location.href = '../login/login.html';
-            } else {
-                console.error(`Falha ao buscar dados de ${url}:`, response.status, await response.text());
+                return; 
+            } 
+            
+            // Outros erros (404, 500): Não redireciona, apenas loga.
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error(`Falha na API (${response.status}) ao buscar ${url}. Verifique o terminal do Django.`, errorText);
             }
         } catch (error) {
+            // Erros de rede (servidor offline, etc.)
             console.error(`Erro de conexão ao buscar dados de ${url}:`, error);
         }
         return [];
@@ -117,7 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Função para buscar as normas do cliente e preencher os seletores
     async function carregarNormasNosSeletores() {
-        const normas = await fetchData('http://127.0.0.1:8000/api/minhas-normas/');
+        // A API /api/minhas-normas/ é onde o ProgrammingError está ocorrendo
+        const normas = await fetchData('http://127.0.0.1:8000/api/minhas-normas/'); 
         if (normas && normas.length > 0) {
             const choicesData = normas.map(norma => ({
                 value: norma.id,
@@ -165,6 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 console.error('Falha na resposta do servidor:', response.status, response.statusText);
                 let errorDetail = 'O servidor retornou um erro, mas não foi possível obter os detalhes.';
+                
+                // Tenta ler o JSON de erro (comum em DRF)
                 try {
                     const errorData = await response.json();
                     console.error('Detalhe do erro (JSON):', errorData);
@@ -172,14 +187,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     errorDetail = `${firstErrorKey}: ${errorData[firstErrorKey][0]}`;
                 } catch (jsonError) {
                     console.error('A resposta de erro não é JSON. Lendo como texto.');
-                    try {
-                        const errorText = await response.text();
-                        console.error('Detalhe do erro (Texto):', errorText);
-                        errorDetail = 'O servidor retornou um erro inesperado. Verifique o console do navegador (F12) para o traceback completo.';
-                    } catch (textError) {
-                        console.error('Não foi possível ler o corpo da resposta do erro.');
-                    }
+                    const errorText = await response.text();
+                    console.error('Detalhe do erro (Texto):', errorText);
+                    errorDetail = 'O servidor retornou um erro inesperado. Verifique o console do navegador (F12) para o traceback completo.';
                 }
+                
                 alert(`Erro ao salvar: ${errorDetail}`);
             }
         } catch (error) {
