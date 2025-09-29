@@ -18,6 +18,8 @@
     --border-color: rgba(255, 255, 255, 0.18);
     --bg-principal: #f4f4f4;
     --primary-color: #6a11cb;
+     --cor-olvian-primaria: #8B459B; /* Um tom de roxo médio para destaque */
+    --cor-olvian-secundaria: #EDE7F6; /* Um lilás muito claro para o hover */
 }
 
 html, body {
@@ -169,7 +171,7 @@ html, body {
 .content-area {
     flex-grow: 1;
     background-color: var(--bg-principal);
-    overflow-y: hidden; /* Mude para hidden, pois o painel interno já tem a rolagem */
+    overflow-y: auto; /* Mude para hidden, pois o painel interno já tem a rolagem */
     display: flex;
     flex-direction: column;
 }
@@ -237,7 +239,7 @@ html, body {
     border-radius: 10px;
     background-color: #FCFCFC;
     margin: 10px;
-    padding: 15px;
+    padding: 30px;
     font-size: 12px;
     font-weight: 400;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -253,7 +255,7 @@ html, body {
     background-color: #FCFCFC;
     margin: 10px;
     margin-top: -1px;
-    padding: 15px;
+    padding: 30px;
     font-size: 12px;
     font-weight: 400;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -261,4 +263,47 @@ html, body {
 
 .termosRelevantes h2{
     margin-top: -3px;
+}
+
+
+/* Cor principal do OLIVIAN (ex: #7B1FA2 ou um tom de vinho/roxo) */
+:root {
+    --cor-olvian-primaria: #8B459B; /* Um tom de roxo médio para destaque */
+    --cor-olvian-secundaria: #EDE7F6; /* Um lilás muito claro para o hover */
+}
+
+/* 1. Estilo para os Títulos das Categorias */
+.termosImportantes h2, .termosRelevantes h2 {
+    color: #8c005b; /* Cor do OLIVIAN no título */
+    border-bottom: 2px solid #8c005b; /* Linha divisória sutil */
+    padding-bottom: 8px;
+    margin-top: -5px;
+    font-size: 1.5em; /* Aumenta um pouco */
+}
+
+/* 2. Estilo para cada Termo (o novo "Card") */
+.termo-item {
+    background-color: #f9f9f9; /* Fundo muito sutilmente cinza */
+    border-left: 12px solid #9D3972; /* Borda lateral com a cor de destaque */
+    padding: 15px 20px 15px 20px;
+    margin-bottom: 10px; /* Espaço entre os termos */
+    border-radius: 4px; /* Cantos arredondados */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08); /* Sombra suave para efeito 3D (opcional) */
+    transition: all 0.2s ease-in-out; /* Transição suave para o hover */
+    line-height: 1.6; /* Melhora a legibilidade do corpo do texto */
+}
+
+/* 3. Efeito HOVER (Interatividade) */
+.termo-item:hover {
+    background-color: var(--cor-olvian-secundaria); /* Fundo lilás claro ao passar o mouse */
+    box-shadow: 0 4px 6px rgba(0,0,0,1.9); /* Sombra mais forte no hover */
+    transform: translateY(-2px); /* Efeito sutil de 'levantar' */
+}
+
+/* 4. Estilo para o Termo (a parte em negrito) */
+.termo-item strong {
+    color: #333; /* Cor mais escura para o termo */
+    font-size: 1.2em; /* Levemente maior que o corpo do texto */
+    display: inline-block; /* Garante que o termo se destaque */
+    margin-right: 5px; /* Espaço após os dois pontos */
 }
