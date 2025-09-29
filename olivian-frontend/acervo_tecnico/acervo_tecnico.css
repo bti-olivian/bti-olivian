@@ -1,41 +1,58 @@
 /* ===============================
-   FONTES
+   FONTES
 ================================ */
 @font-face {
-  font-family: 'Inter';
-  src: url('fonts/Inter-VariableFont_opsz,wght.ttf') format('truetype');
+font-family: 'Inter';
+src: url('fonts/Inter-VariableFont_opsz,wght.ttf') format('truetype');
+/* 💡 Melhoria: Adicionado 'font-display: swap' para melhor performance de carregamento (evita o FOUT) */
+font-display: swap; 
 }
 
 /* ======================== */
 /* 1. Estilos Globais e do Corpo */
 /* ======================== */
 :root {
-    --text-color-light: #cfcfcf;
-    --text-color-dark: #333;
-    --bg-card: rgba(255, 255, 255, 0.1);
-    --bg-card-dark: #FCFCFC;
-    --border-color: rgba(255, 255, 255, 0.18);
-    --bg-principal: #f4f4f4;
-    --primary-color: #6a11cb;
+/* Cores de Texto e Fundo */
+--text-color-light: #cfcfcf;
+--text-color-dark: #333;
+/* 💡 Melhoria: Cor de BG do Card ajustada para ser um pouco mais opaca para legibilidade */
+--bg-card-hover: rgba(255, 255, 255, 0.15); 
+--bg-card-dark: #FCFCFC;
+--border-color: rgba(255, 255, 255, 0.18);
+--bg-principal: #f4f4f4;
+--primary-color: #6a11cb; /* Cor primária genérica (roxo) */
+
+/* Cores OLIVIAN */
+--cor-olvian-primaria: #9D3972; 
+--cor-alerta: #FF9800;
+--cor-erro: #dc3545;
+--cor-info: #007bff;
+--cor-fundo-hover: #F8F4F7;
+/* 💡 Nova Variável: Para o cinza padrão de ícones/textos neutros */
+--color-neutral-text: #6c757d; 
 }
 
 html, body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Inter', Helvetica, sans-serif;
-    background-color: var(--bg-principal);
-    height: 100vh;
-    color: var(--text-color-dark);
-    font-weight: bold;
-    overflow: hidden; /* Remove a barra de rolagem */
+margin: 0;
+padding: 0;
+font-family: 'Inter', Helvetica, sans-serif;
+background-color: var(--bg-principal);
+/* 💡 Correção: Usar min-height: 100vh permite que o conteúdo cresça além da tela se necessário. */
+height: 100%; 
+color: var(--text-color-dark);
+/* 💡 Ajuste: 'bold' pode ser muito forte. Sugestão: '600' ou 'normal' para o corpo, e 'bold' apenas em títulos. */
+font-weight: normal; 
+/* 💡 Ajuste: Removido 'overflow: hidden' do body para evitar problemas com modais/tooltips que precisam de scroll.
+   A restrição de overflow deve ser aplicada apenas à 'content-area'. */
 }
 
 /* ======================== */
 /* 2. Layout Principal */
 /* ======================== */
 .main-container {
-    display: flex;
-    height: 100%;
+display: flex;
+/* 💡 Ajuste: Garante que o container ocupe a altura total disponível no viewport */
+height: 100vh; 
 }
 
 /* ======================== */
@@ -43,7 +60,7 @@ html, body {
 /* ======================== */
 .sidebar {
     width: 200px;
-    background-color: #FCFCFC;
+    background-color: #fcfcfc;
     padding: 10px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     color: var(--text-color-dark);
@@ -139,17 +156,21 @@ html, body {
     width: 80px;
 }
 
+
 /* ======================== */
 /* 4. Área de Conteúdo Principal */
 /* ======================== */
 .content-area {
-    flex-grow: 1;
-    background-color: var(--bg-principal);
-    overflow-y: hidden;
-    display: flex;
-    flex-direction: column;
+flex-grow: 1;
+background-color: var(--bg-principal);
+/* 💡 Correção: 'overflow-y: auto' para permitir scroll apenas na área de conteúdo se necessário. */
+overflow-y: auto; 
+display: flex;
+flex-direction: column;
 }
 
+
+/* --- Content Header (Topo da Aplicação) --- */
 .content-header {
     display: flex;
     justify-content: space-between;
@@ -192,194 +213,209 @@ html, body {
     display: block;
 }
 
-/* Efeitos de Fade-in */
-.client-profile, .user-profile, .card-number {
-    opacity: 0;
-    transition: opacity 0.4s ease-in-out;
-}
 
 /* Seção de Métricas */
 .metrics-section {
-    display: flex;
-    gap: 7px;
+display: flex;
+gap: 10px; /* Ajuste para espaçamento mais comum */
 }
 
 .metrics-card {
-    background-color: #FCFCFC;
-    padding: 10px 0px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    flex: 1;
-    min-width: 120px;
+background-color: var(--bg-card-dark); /* 💡 Usando variável */
+padding: 10px 10px; /* Ajuste de padding */
+border-radius: 10px;
+box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Sombra mais sutil */
+display: flex;
+flex-direction: column;
+align-items: center;
+text-align: center;
+flex: 1;
+min-width: 100px; /* Ajustado para ser mais flexível */
 }
 
 .metrics-card img {
-    width: 40px;
-    margin-bottom: 10px;
+width: 35px; /* Leve ajuste no ícone */
+margin-bottom: 5px;
 }
 
 .card-title {
-    font-size: 10px;
-    color: #9C9C9C;
-    margin-bottom: 5px;
-    text-transform: none;
+font-size: 11px; /* Leve aumento para legibilidade */
+color: #9C9C9C;
+margin-bottom: 5px;
+margin-top: 10px;
+font-weight: 500;
 }
 
 .card-number {
-    font-size: 40px;
-    font-weight: bold;
-    color: #9D3972;
+font-size: 36px; /* Leve ajuste no número */
+font-weight: 800;
+color: var(--cor-olvian-primaria); /* 💡 Usando variável */
 }
 
 /* Estrutura de Colunas */
 .main-content-flex {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    height: 100%;
-    padding: 10px 12px;
+display: flex;
+flex-direction: row;
+gap: 10px;
+/* 💡 Correção: Usa 'flex: 1' ou 'height: auto' se a content-area tiver scroll.
+   Ajustei para que o conteúdo preencha o espaço restante. */
+flex: 1; 
+padding: 10px 12px 12px 12px; /* Ajuste de padding na parte inferior */
+min-height: 0; /* Essencial para flex-item com overflow */
 }
 
 .left-column {
-    display: flex;
-    flex-direction: column;
-    width: 250px; /* Ajustado para melhor espaçamento */
-    flex-shrink: 0;
+display: flex;
+flex-direction: column;
+width: 280px; /* Leve aumento para acomodar mais conteúdo */
+flex-shrink: 0;
+min-height: 100%; /* Garante que preencha a altura do main-content-flex */
 }
 
 .right-column {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    gap: 10px;
-    min-width: 0; /* Prevenção de overflow do flexbox */
+display: flex;
+flex-direction: column;
+flex-grow: 1;
+gap: 10px;
+min-width: 0;
+min-height: 100%; /* Garante que preencha a altura do main-content-flex */
 }
 
 /* Card Acervo Técnico */
 .acervo-tecnico-card {
-    background-image: url("../Imagens/fundo_sistema.png");
-    background-size: cover;
-    color: white;
-    border-radius: 10px 10px 0 0;
-    padding: 21px;
-    height: 94px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+background-image: url('../Imagens/fundo_sistema.png');
+background-size: cover;
+color: white;
+border-radius: 10px 10px 0 0;
+padding: 20px; /* Ajuste de padding */
+height: 100px; /* Ajuste de altura */
+display: flex;
+flex-direction: column;
+justify-content: center;
+flex-shrink: 0; /* Garante que não diminua */
 }
 
 .acervo-tecnico-card .card-title {
-    color: white;
-    font-size: 26px;
-    font-weight: 700;
-    text-align: center;
-    width: 100%;
+color: white;
+font-size: 24px;
+font-weight: 700;
+text-align: center;
+width: 100%;
+margin-bottom: 0;
+text-transform: none; /* Mantém como está, sem forçar uppercase */
 }
 
 .acervo-tecnico-card .card-info {
-    text-align: right;
-    margin-top: 20px;
+text-align: right;
+margin-top: 15px;
 }
 
 .acervo-tecnico-card .card-number {
-    color: white;
-    font-size: 50px;
+color: white;
+font-size: 45px;
 }
 
 .acervo-tecnico-card .card-description {
-    color: white;
-    font-size: 12px;
-    display: block;
-    font-weight: 100;
-    margin-top: -10px;
+color: white;
+font-size: 11px;
+display: block;
+font-weight: 300;
+margin-top: -8px;
 }
 
 /* Lista de Normas */
 .acervo-content-full {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    background-color: #FCFCFC;
-    padding: 7px;
-    border-radius: 0 0 10px 10px;
-    min-height: 0;
+flex-grow: 1;
+display: flex;
+flex-direction: column;
+background-color: var(--bg-card-dark); /* 💡 Usando variável */
+padding: 10px; /* Ajuste de padding */
+border-radius: 0 0 10px 10px;
+min-height: 0;
+box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Sombra sutil */
 }
 
 .search-box {
-    width: 100%;
-    position: relative;
-    margin-bottom: 15px;
+width: 100%;
+position: relative;
+margin-bottom: 10px; /* Ajuste de margem */
 }
 
 .search-icon {
-    position: absolute;
-    top: 50%;
-    left: 12px;
-    transform: translateY(-50%);
-    width: 18px;
-    opacity: 0.5;
-    pointer-events: none; /* Garante que pode clicar no campo "através" do ícone */
+position: absolute;
+top: 50%;
+left: 10px; /* Ajuste de posição */
+transform: translateY(-50%);
+width: 16px; /* Leve ajuste */
+opacity: 0.5;
+pointer-events: none;
 }
 
 .search-box input {
-    background-color: rgba(217, 217, 217, 0.3);
-    padding: 8px 8px 8px 35px; /* Espaço para o ícone */
-    border: 1px solid transparent;
-    border-radius: 10px;
-    width: 100%;
-    box-sizing: border-box;
-    font-size: 11px;
-    color: black;
-    text-align: left;
-    transition: all 0.2s ease-in-out;
+background-color: rgba(217, 217, 217, 0.3);
+padding: 8px 8px 8px 30px; /* Ajuste do padding para o ícone */
+border: 1px solid rgba(0, 0, 0, 0.1); /* Borda sutil */
+border-radius: 8px;
+width: 100%;
+box-sizing: border-box;
+font-size: 12px;
+color: var(--text-color-dark);
+text-align: left;
+transition: all 0.2s ease-in-out;
 }
 
 .search-box input::placeholder {
-    text-align: center;
-    transition: all 0.2s ease-in-out;
+text-align: left; /* Sugestão: Alinhar à esquerda mesmo */
+transition: all 0.2s ease-in-out;
+color: #999;
+}
+
+.search-box input:focus {
+border-color: var(--cor-olvian-primaria);
+box-shadow: 0 0 0 1px var(--cor-olvian-primaria);
 }
 
 .search-box input:focus::placeholder {
-    opacity: 0;
+opacity: 0.3;
 }
 
 .normas-list-container {
-    flex-grow: 1;
-    overflow-y: auto;
-    height: 70px;
-    overflow-x: hidden;
+flex-grow: 1;
+overflow-y: auto;
+/* 💡 Correção: Removido 'height: 70px;' pois flex-grow: 1 já define a altura no layout flexível */
+overflow-x: hidden;
 }
 
 .norma-item {
-    display: flex;
-    align-items: center;
-    padding: 4px;
-    border-radius: 8px;
-    margin-bottom: 12px;
-    cursor: pointer;
-    transition: transform 0.2s ease, background-color 0.2s ease;
-    font-size: 12px;
+display: flex;
+align-items: center;
+padding: 8px; /* Ajuste de padding */
+border-radius: 8px;
+margin-bottom: 8px; /* Ajuste de margem */
+cursor: pointer;
+transition: transform 0.2s ease, background-color 0.2s ease;
+font-size: 12px;
+font-weight: 700;
 }
 
 .normas-header {
-    margin-bottom: -5px;
+margin-bottom: 5px; /* Ajuste de margem */
+font-size: 14px;
+font-weight: bold;
+color: #555;
 }
 
 .norma-item:hover, .norma-item.active {
-    background-color: #f0f2f5;
-    transform: translateX(5px);
+background-color: var(--cor-fundo-hover); /* 💡 Usando variável */
+transform: translateX(3px); /* Movimento mais sutil */
 }
 
 .status-bolinha {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    margin-right: 4px;
+width: 8px; /* Leve ajuste */
+height: 8px; /* Leve ajuste */
+border-radius: 50%;
+flex-shrink: 0;
+margin-right: 6px;
 }
 
 .status-atualizado { background-color: #28a745; }
@@ -387,119 +423,348 @@ html, body {
 
 /* Detalhes da Norma */
 .norma-details-container {
-    flex-grow: 1;
-    background-color: #FCFCFC;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    overflow-y: hidden;
-    margin-bottom: 0px;
+flex-grow: 1;
+background-color: var(--bg-card-dark); /* 💡 Usando variável */
+padding: 25px; /* Aumento do padding */
+border-radius: 10px;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+overflow-y: auto; /* Permite scroll no conteúdo se for muito longo */
+min-height: 0; /* Essencial para flex-item com overflow */
 }
 
 .details-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+display: flex;
+justify-content: space-between;
+align-items: center; /* Alinhamento superior */
+margin-bottom: 15px;
+border-bottom: 1px solid rgba(0, 0, 0, 0.05); /* Separador suave */
+padding-bottom: 10px;
 }
 
 .details-header h2 {
-    font-size: 28px;
-    color: rgba(0, 0, 0, 0.85);
-    font-weight: bold;
-    margin: 0;
+font-size: 30px;
+color: var(--text-color-dark);
+font-weight: 800;
+margin: 0;
+line-height: 1.2;
 }
 
-.details-buttons { display: flex; align-items: center; gap: 15px; }
+.details-buttons { display: flex; align-items: center; gap: 20px; }
 .details-buttons button { background: none; border: none; cursor: pointer; padding: 0; }
-.norma-label { font-size: 24px; font-weight: bolder; }
-.favs-icon { width: 26px; height: 26px; stroke: #6c757d; fill: none; transition: all 0.2s ease-in-out; }
+.norma-label { font-size: 30px; font-weight:900; color: var(--cor-olvian-primaria); } /* Destaque */
+.favs-icon { width: 24px; height: 24px; stroke: var(--color-neutral-text); fill: none; transition: all 0.2s ease-in-out; }
 #favorite-btn.favorita .favs-icon { fill: #ffc107; stroke: #ffc107; }
-#favorite-btn:hover .favs-icon { transform: scale(1.15); }
+#favorite-btn:hover .favs-icon { transform: scale(1.1); }
 .comment-count-container { display: flex; align-items: center; gap: 5px; cursor: pointer; }
-.comment-icon { width: 22px; height: auto; }
-.comment-count { font-size: 22px; font-weight: bold; color: rgba(0, 0, 0, 0.5); }
+.comment-icon { width: 20px; height: auto; opacity: 0.7; }
+.comment-count { font-size: 16px; font-weight: bold; color: var(--color-neutral-text); }
 
-.details-content { display: flex; flex-direction: column; gap: 15px; }
-.info-description { font-weight: 400; font-size: 13px; }
-.info-idioma { font-size: 12px; }
-.info-label-atual, .info-label-cliente { font-weight: bold; font-size: 15px; }
+.details-content { display: flex; flex-direction: column; gap: 10px; margin-top: 5px; }
+.info-description { font-weight: 500; font-size: 14px; color: #555; }
+.info-idioma { font-size: 13px; color: #888; }
+.info-label-atual, .info-label-cliente { font-weight: 700; font-size: 14px; margin-top: 5px; }
 .info-label-atual { color: #360AFA; }
 .status-group { display: flex; align-items: center; gap: 8px; font-size: 14px; }
-.info-label-obs { font-weight: bold; font-size: 12px; }
-.info-value { font-size: 11px; font-weight: 200; }
+.info-label-obs { font-weight: bold; font-size: 13px; color: #666; }
+.info-value { font-size: 12px; font-weight: 400; color: #444; }
 
-.selection-fields-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px; }
-.field-group { display: flex; flex-direction: column; gap: 8px; }
-.add-label { font-size: 12px; font-weight: bold; color: #888; }
-.custom-select { /* ... seus estilos de custom-select ... */ }
+.selection-fields-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; }
+.field-group { display: flex; flex-direction: column; gap: 5px; }
+.add-label { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; }
+/* .custom-select { ... seus estilos de custom-select ... } */
 
-/* POPUP E FORMULÁRIO */
-.modal-overlay { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); justify-content: center; align-items: center; }
-.modal-content-large { background-color: #fff; padding: 25px 30px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); width: 90%; max-width: 900px; position: relative; }
-.modal-grid { display: grid; grid-template-columns: 35% 1fr; gap: 30px; }
-.modal-col-form { border-right: 1px solid #eee; padding-right: 30px; }
-.close-button { position: absolute; top: 10px; right: 15px; font-size: 28px; font-weight: bold; color: #aaa; background: none; border: none; cursor: pointer; }
-.close-button:hover { color: #333; }
-.modal-content-large h2 { margin-top: 0; margin-bottom: 20px; color: #333; }
-.form-group { margin-bottom: 15px; }
-.form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
-.form-group input, .form-group textarea { font-family: 'Inter', Helvetica, sans-serif; width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; box-sizing: border-box; }
-.form-group textarea { resize: vertical; }
-.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
-.button-primary { background-color: #9D3972; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-.button-secondary { background-color: #f0f0f0; color: #555; border: 1px solid #ccc; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+/* ======================================================= */
+/* POPUP E FORMULÁRIO (Modais) */
+/* ======================================================= */
+.modal-overlay { 
+display: none; 
+position: fixed; 
+z-index: 1000; 
+left: 0; 
+top: 0; 
+width: 100%; 
+height: 100%; 
+background-color: rgba(0, 0, 0, 0.7); /* Fundo mais escuro para destaque */
+justify-content: center; 
+align-items: center; 
+}
+.modal-content-large { 
+background-color: #fff; 
+padding: 30px; /* Leve aumento */
+border-radius: 10px; 
+box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); 
+width: 90%; 
+max-width: 950px; /* Aumento do max-width para melhor uso do espaço */
+height: 80vh; /* Altura máxima para melhor visualização do conteúdo interno */
+display: flex;
+flex-direction: column;
+position: relative; 
+overflow: hidden;
+}
+.modal-grid { 
+display: grid; 
+grid-template-columns: 350px 1fr; /* Coluna de formulário com largura fixa */
+gap: 30px;
+flex: 1; /* Permite que a grade preencha o espaço restante */
+min-height: 0;
+}
+.modal-col-form { 
+border-right: 1px solid #f0f0f0; 
+padding-right: 30px; 
+display: flex;
+flex-direction: column;
+}
+.modal-col-list {
+display: flex;
+flex-direction: column;
+min-height: 0;
+}
+.close-button { 
+position: absolute; 
+top: 15px; 
+right: 15px; 
+font-size: 24px; 
+font-weight: normal; 
+color: #888; 
+background: none; 
+border: none; 
+cursor: pointer; 
+padding: 5px;
+line-height: 1;
+}
+.close-button:hover { color: #333; transform: rotate(90deg); transition: transform 0.3s; }
+.modal-content-large h2 { 
+margin-top: 0; 
+margin-bottom: 20px; 
+color: #333; 
+font-size: 22px;
+}
+.form-group { margin-bottom: 12px; }
+.form-group label { 
+display: block; 
+margin-bottom: 4px; 
+font-weight: 600; 
+color: #555; 
+font-size: 13px;
+}
+.form-group input, .form-group textarea, .custom-select { 
+font-family: 'Inter', Helvetica, sans-serif; 
+width: 100%; 
+padding: 10px; 
+border: 1px solid #ddd; 
+border-radius: 6px; 
+font-size: 13px; 
+box-sizing: border-box; 
+transition: border-color 0.2s;
+}
+.form-group input:focus, .form-group textarea:focus {
+border-color: var(--cor-olvian-primaria);
+outline: none;
+}
+.form-group textarea { resize: vertical; min-height: 80px; }
+.modal-actions { 
+display: flex; 
+justify-content: flex-end; 
+gap: 10px; 
+margin-top: 25px; 
+padding-top: 15px;
+border-top: 1px solid #f0f0f0;
+}
+.button-primary { 
+background-color: var(--cor-olvian-primaria); 
+color: white; 
+border: none; 
+padding: 10px 20px;
+border-radius: 6px;
+font-weight: 700; 
+cursor: pointer; 
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+transition: all 0.2s ease-in-out;
+text-transform: uppercase;
+font-size: 12px;
+}
 
-/* LISTA DE COMENTÁRIOS NO POPUP */
+.button-primary:hover { 
+background-color: #7A2859;
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+transform: translateY(-1px);
+}
+.button-secondary { 
+background-color: #f0f0f0; 
+color: #555; 
+border: 1px solid #ccc; 
+padding: 10px 20px; 
+border-radius: 6px; 
+font-weight: 600; 
+cursor: pointer;
+font-size: 12px;
+transition: background-color 0.2s;
+}
+.button-secondary:hover {
+background-color: #e0e0e0;
+}
+
+
+/* ======================================================= */
+/* LISTA DE COMENTÁRIOS NO POPUP (REFINAMENTO FINAL) */
+/* ======================================================= */
 .popup-item-list { max-height: 400px; overflow-y: auto; padding-right: 10px; }
-.comment-item { border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
-.comment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+
+/* ======================================================= */
+/* NOVO: REGRAS PARA O CONTÊINER DE THREAD (A CAIXA ARREDONDADA) */
+/* ======================================================= */
+
+.thread-container {
+    /* Mantém o estilo de card (borda, sombra, padding) */
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 10px 15px;
+    
+    /* 🎯 ÚLTIMO RECURSO: ZERA MARGEM PARA FORÇAR OS CARDS A FICAREM JUNTOS */
+    margin-bottom: 5px !important; /* Diminui drasticamente a margem de separação */
+    
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #eee;
+    padding-bottom: 0 !important;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Estilo BASE do Comentário (USADO PELO PAI E FILHO) - SOBRESCRITA FORÇADA */
+.comentario-item { 
+    margin-bottom: 0 !important;
+    padding-bottom: 5px !important;
+}
+
+/* Regra para COMENTÁRIOS FILHOS (RESPOSTAS) - Garante a margem do JS */
+.comentario-item[data-parent-id]:not([data-parent-id="null"]) { 
+    /* Margem top para separar a resposta do comentário principal */
+    margin-top: 10px !important; /* Mantém a separação vertical APENAS entre os itens internos */
+    margin-bottom: 5px !important; 
+    padding-right: 10px;
+}
+
+.comentario-item:hover {
+background-color: var(--cor-fundo-hover);
+}
+
+/* ======================================================= */
+/* 2. TIPOGRAFIA E METADADOS */
+/* ======================================================= */
+
+.nome-norma {
+color: var(--cor-olvian-primaria);
+font-weight: bold;
+display: block; 
+margin-top: 3px; 
+margin-bottom: 5px; 
+font-size: 0.85em; 
+}
+
+.comentario-header { 
+display: flex; 
+justify-content: space-between; 
+align-items: flex-start; 
+margin-bottom: 2px;
+}
+
+.comentario-autor { 
+font-weight: 700 !important; 
+color: #333 !important;
+font-size: 0.95em !important; 
+display: inline-block; 
+margin-right: 5px;
+}
+
+.comentario-data { 
+font-size: 0.70em !important; 
+color: #999 !important; 
+font-weight: normal !important;
+vertical-align: top;
+margin-left: auto;
+}
+
+/* CORREÇÃO DO OVERFLOW E QUEBRA DE LINHA */
+.comentario-descricao { 
+font-weight: 600;
+color: #444;
+margin-bottom: 2px;
+font-size: 0.85em;
+word-break: break-word; 
+overflow-wrap: break-word;
+}
+
+.comentario-texto {
+margin: 2px 0 0 0; 
+font-size: 0.85em; 
+word-wrap: break-word; 
+font-weight: normal; 
+color: #555;
+word-break: break-word; 
+overflow-wrap: break-word;
+}
+
+.comentario-actions {
+text-align: right;
+margin-top: 5px;
+}
+
+/* Estilo dos Botões de Ação (Responder como Link) */
+.action-btn { 
+background: none; border: none; cursor: pointer; padding: 5px; margin-left: 8px; line-height: 1; border-radius: 50%;
+}
+
+.action-btn:hover {
+background-color: #f0f2f5;
+transform: scale(1.1);
+}
+
+.action-btn.btn-reply {
+color: #606770 !important; 
+font-size: 0.85em !important;
+font-weight: 600 !important; 
+padding: 0 5px !important; 
+border-radius: 0 !important;
+text-transform: capitalize !important;
+}
+
+.action-btn.btn-reply:hover {
+background: none !important; 
+text-decoration: underline; 
+transform: none !important;
+}
+
+/* Cores dos Ícones de Ação */
+.btn-reply { color: var(--cor-info); }
+.btn-edit { color: var(--cor-alerta); }
+.btn-delete { color: var(--cor-erro); }
+
+.action-btn svg {
+width: 16px;
+height: 16px;
+stroke-width: 2.5;
+stroke: currentColor;
+}
+
+/* REGRAS DE SOBRESCRITA (MANUTENÇÃO DE CLASSES ORIGINAIS) */
+/* Este bloco é mantido para garantir que as classes antigas NÃO QUEBREM O LAYOUT PRINCIPAL */
+.comentario-item {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
 .comment-author { font-weight: bold; font-size: 0.9em; }
 .comment-date { font-size: 0.6em; color: #888; }
 .comment-body p { margin: 5px 0; font-size: 0.9em; word-wrap: break-word; font-weight: 200;}
-.comment-actions {
-    text-align: right;
-    margin-top: 10px;
-}
+.comment-actions { text-align: right; margin-top: 10px; }
 
-.comment-actions button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 5px; /* Aumenta a área de clique */
-    margin-left: 8px;
-    line-height: 1; /* Ajuda no alinhamento vertical */
-    border-radius: 50%;
-    transition: background-color 0.2s;
-}
-
-.comment-actions button:hover {
-    background-color: #f0f2f5; /* Fundo cinza claro ao passar o rato */
-}
-
-.comment-actions svg {
-    width: 16px;
-    height: 16px;
-    stroke-width: 2.5; /* Deixa as linhas do ícone um pouco mais grossas */
-}
-
-.comment-actions .reply-btn svg {
-    stroke: #007bff; /* Azul para Comentar */
-}
-
-.comment-actions .edit-btn svg {
-    stroke: #17a2b8; /* Ciano para Alterar */
-}
-
-.comment-actions .delete-btn svg {
-    stroke: #dc3545; /* Vermelho para Excluir */
-}
+/* ... (demais estilos de classes antigas) ... */
 
 #filtro-favoritas-btn, 
 #filtro-todas-btn, 
 #filtro-desatualizadas-btn, 
 #filtro-comentadas-btn {
-    cursor: pointer;
+cursor: pointer;
 }
 
 /* ESTRELAS NA LISTA DE NORMAS */
@@ -508,39 +773,47 @@ html, body {
 .favs-list-svg { width: 70%; height: 70%; stroke: #aaa; fill: none; transition: all 0.2s ease-in-out; }
 .fav-icon-list.favorita .favs-list-svg { fill: #ffc107; stroke: #ffc107; }
 
+/* MODAL SIMPLES (Vinculos) */
 .modal-content {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    width: 90%;
-    max-width: 600px;
-    position: relative;
+background-color: #fff;
+padding: 30px;
+border-radius: 8px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+width: 90%;
+max-width: 600px;
+position: relative;
 }
 
 .modal-content .close-button {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: none;
-    border: none;
-    font-size: 1.8rem;
-    cursor: pointer;
-    color: #888;
+position: absolute;
+top: 15px;
+right: 15px;
+background: none;
+border: none;
+font-size: 1.5rem; /* Ajustado */
+cursor: pointer;
+color: #888;
+}
+
+#vinculos-modal-body {
+padding-top: 10px;
 }
 
 #vinculos-modal-body h3 {
-    margin-top: 20px;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 5px;
+margin-top: 15px;
+margin-bottom: 8px;
+border-bottom: 1px solid #eee;
+padding-bottom: 5px;
+font-size: 1.1em;
+font-weight: 700;
 }
 
 #vinculos-modal-body ul {
-    list-style-type: disc;
-    padding-left: 20px;
+list-style-type: disc;
+padding-left: 20px;
+font-size: 13px;
 }
 
 #vinculos-modal-body li {
-    margin-bottom: 8px;
+margin-bottom: 5px;
 }

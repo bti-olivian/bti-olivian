@@ -5,6 +5,8 @@ from datetime import date, datetime
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import password_validation
 from django.utils.translation import gettext_lazy as _
+from rest_framework import serializers
+from .models import Comentario # Assumindo que Comentario está importado
 
 User = get_user_model()
 
@@ -228,16 +230,53 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
     
 # Em gestao_normas/serializers.py
 
+# Seu serializers.py
+
+# Seu serializers.py
+
+# Seu serializers.py
+
+# Seu serializers.py
+
 class ComentarioSerializer(serializers.ModelSerializer):
     # Traz o nome do usuario que fez o comentario (apenas para leitura)
     usuario_nome = serializers.CharField(source='usuario.get_full_name', read_only=True)
+    
+    # 🎯 CORREÇÃO CRÍTICA 1: Garante que o usuário seja retornado como ID.
+    # Isso é fundamental para que o Front-end possa comparar o autor.
+    usuario = serializers.PrimaryKeyRelatedField(read_only=True) 
+    
+    # 🎯 CORREÇÃO CRÍTICA 2: Garante que o comentario_pai seja retornado como ID numérico.
+    comentario_pai = serializers.PrimaryKeyRelatedField(queryset=Comentario.objects.all(), allow_null=True, required=False)
 
+    # 🚀 CAMPO RECURSIVO: Este campo aparecerá na API e conterá a lista de respostas.
+    respostas = serializers.SerializerMethodField()
+    
     class Meta:
         model = Comentario
-        fields = ['id', 'norma_cliente', 'usuario', 'usuario_nome', 'descricao', 'comentario', 'data_criacao']
+        # Incluímos 'respostas' no fields
+        fields = [
+            'id', 'norma_cliente', 'usuario', 'usuario_nome', 
+            'comentario_pai', 'descricao', 'comentario', 
+            'data_criacao', 'respostas'
+        ]
 
-        # --- CORREÇÃO CRÍTICA: Os campos 'usuario' e 'norma_cliente' serão definidos na View
+        # 'usuario' e 'norma_cliente' são definidos pela View
         read_only_fields = ['usuario', 'norma_cliente']
+        
+    def get_usuario_nome(self, obj):
+        # Garante que o nome completo seja retornado
+        return obj.usuario.get_full_name()
+    
+    # 🎯 NOVO MÉTODO CRÍTICO: Define o conteúdo do campo 'respostas'
+    def get_respostas(self, obj):
+        # O obj.respostas.all() usa o related_name que definimos no model para buscar os filhos.
+        # Recursivamente, serializa esses filhos usando a mesma classe ComentarioSerializer.
+        
+        # 💡 CRÍTICO: Usamos 'obj.respostas.all()' que busca os filhos DESTE objeto.
+        # Passamos a lista de filhos para o Serializer, garantindo que o neto seja incluído no payload.
+        serializer = ComentarioSerializer(obj.respostas.all(), many=True)
+        return serializer.data
 
 # No final de gestao_normas/serializers.py
 

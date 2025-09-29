@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- VARIÁVEIS GLOBAIS E SELETORES ---
     let todasAsNormas = [], normaAtualId = null, infoUsuario = null;
 
-    // CORREÇÃO CRÍTICA: Altera a chave para 'access' (assumindo que o login salva com esta chave)
     const accessToken = localStorage.getItem('access'); 
 
     if (!accessToken) { 
@@ -21,19 +20,52 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('filtro-favoritas-btn'), document.getElementById('filtro-todas-btn'), document.getElementById('filtro-desatualizadas-btn'),
         document.getElementById('filtro-comentadas-btn')
     ];
+    
+    // --- FUNÇÃO PARA CONTROLAR VISIBILIDADE DO CAMPO DESCRIÇÃO ---
+    function toggleDescriptionField(show) {
+        const descriptionGroup = document.querySelector('#commentForm .form-group');
+        if (descriptionGroup) {
+            descriptionGroup.style.display = show ? 'block' : 'none';
+        }
+    }
+
+    // --- FUNÇÃO PARA RESETAR O ESTADO DO FORMULÁRIO ---
+    function resetCommentFormState() {
+        commentForm.reset();
+        commentForm.dataset.mode = 'create';
+        delete commentForm.dataset.commentId;
+        delete commentForm.dataset.commentPaiId; 
+        
+        const saveBtn = document.getElementById('saveCommentBtn');
+        saveBtn.classList.remove('editing');
+        saveBtn.textContent = 'SALVAR COMENTÁRIO'; 
+        
+        document.getElementById('commentDescription').placeholder = 'Ex: Projeto xyz'; 
+        document.getElementById('commentText').placeholder = 'Digite aqui o seu comentário';
+        
+        toggleDescriptionField(true); 
+    }
 
     // --- LÓGICA DO POPUP ---
-    async function openModal() { if (modal) { await carregarComentariosDoPopup(); modal.style.display = 'flex'; } }
-    function closeModal() { if (modal) modal.style.display = 'none'; }
+    async function openModal() { 
+        if (modal) { 
+            if (!infoUsuario) await carregarDadosUsuario();
+            await carregarComentariosDoPopup(); 
+            modal.style.display = 'flex'; 
+        } 
+    }
+    function closeModal() { 
+        if (modal) modal.style.display = 'none'; 
+        resetCommentFormState(); 
+    }
 
     // --- FUNÇÕES DE API ---
     async function fetchData(url, options = {}) {
         try {
-            // Usa o accessToken obtido no início do script
             const response = await fetch(url, { 
                 ...options, 
                 headers: { 
-                    'Authorization': `Bearer ${accessToken}`, // Chave de autorização constante
+                    'Authorization': `Bearer ${accessToken}`, 
                     'Content-Type': 'application/json', 
                     ...options.headers 
                 } 
@@ -44,7 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 return null;
             }
             if (!response.ok) { 
-                console.error(`Erro na API ${url}:`, await response.text()); 
+                const errorText = await response.text();
+                console.error(`Erro na API ${url} (Status: ${response.status}):`, errorText); 
                 return null; 
             }
             return response.status === 204 ? true : await response.json();
@@ -53,15 +86,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return null; 
         }
     }
-
     
-
     // --- FUNÇÕES DE RENDERIZAÇÃO E LÓGICA PRINCIPAL ---
     
-    // Função auxiliar para formatar CNPJ (assumindo que você a definiu em outro lugar)
     function formatarCNPJ(cnpj) {
         if (!cnpj) return 'N/A';
-        // Simplificado para teste. Se precisar da formatação completa, adicione a lógica aqui.
         return cnpj.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
     }
 
@@ -72,7 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('.client-profile').style.opacity = 1;
             document.querySelector('.user-profile').style.opacity = 1;
             document.getElementById('client-name').textContent = profileData.cliente.empresa;
-            // APLICA A FORMATAÇÃO DO CNPJ AQUI
             document.getElementById('client-cnpj').textContent = formatarCNPJ(profileData.cliente.cnpj);
             document.getElementById('user-name').textContent = `Olá, ${profileData.nome_completo}`;
             document.getElementById('user-email').textContent = profileData.email;
@@ -118,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function carregarNormas() {
         const normas = await fetchData(`${API_BASE_URL}/minhas-normas/`);
         if (normas) {
-            normas.sort((a, b) => `${a.organizacao} ${a.norma}`.localeCompare(`${b.organizacao} ${b.norma}`));
+            normas.sort((a, b) => `${a.organizacao} ${a.norma}`.localeCompare(`${b.organizacao} ${b.nomeNormaCompleto}`));
             todasAsNormas = normas;
             renderizarListaNormas(todasAsNormas);
             if (todasAsNormas.length > 0 && !normaAtualId) {
@@ -154,54 +182,161 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // --- FUNÇÃO PRINCIPAL DE RENDERIZAÇÃO COM LÓGICA ANINHADA (CORRIGIDA) ---
+    function renderizarComentarios(comentarios, parentId = null, nestingLevel = 0) {
+        // 🎯 CRÍTICO: Usa a lógica de filtro PLANA, que é a mais segura para evitar falhas de serialização complexa.
+        const comentariosFiltrados = comentarios.filter(c => {
+            // Se c.comentario_pai é um objeto {id: X} ou um ID simples, extrai-o. Se é null, mantém null.
+            const comentarioPaiId = c.comentario_pai ? (c.comentario_pai.id || c.comentario_pai) : null;
+            
+            // Compara o ID extraído com o parentId (que é null no nível raiz ou um ID de comentário nos filhos)
+            return comentarioPaiId === parentId;
+        });
+        
+        let htmlContent = '';
+        
+        const nomeNormaCompleto = `${document.getElementById('norma-organizacao').textContent} ${document.getElementById('norma-titulo').textContent}`;
+
+        comentariosFiltrados.forEach(comentario => {
+            const dataFormatada = new Date(comentario.data_criacao).toLocaleString('pt-BR');
+            
+            // Lógica do Botão Responder/Editar/Excluir
+            let actionsHtml = `<button class="action-btn btn-reply" title="Responder ao comentário" data-comment-id="${comentario.id}">Responder</button>`;
+
+            if (infoUsuario && comentario.usuario === infoUsuario.id) {
+                actionsHtml += `
+                    <button class="action-btn btn-edit" title="Alterar" data-comment-id="${comentario.id}">&#x270E;</button>
+                    <button class="action-btn btn-delete" title="Excluir" data-comment-id="${comentario.id}">&#x1F5D1;</button>`;
+            }
+            
+            // LÓGICA DE VISIBILIDADE E RECÚO
+            let indentStyle = '';
+            let comentarioDescricaoHtml = '';
+            let normaHtml = '';
+            
+            if (nestingLevel === 0) {
+                // Se for RAIZ (Comentário Principal): EXIBE TUDO
+                normaHtml = `<span class="nome-norma">${nomeNormaCompleto}</span>`;
+                if (comentario.descricao && comentario.descricao.trim() !== '') {
+                    comentarioDescricaoHtml = `<div class="comentario-descricao">${comentario.descricao}</div>`;
+                }
+            } else {
+                // Se for RESPOSTA (Filho): ESCONDE TUDO E APLICA RECÚO
+                // Margem para recuo (30px) e margem top (10px) para separação
+                indentStyle = `style="margin-left: ${nestingLevel * 30}px; padding-left: 0px; margin-top: 10px;"`; 
+            }
+
+
+            // 2. Chamada recursiva para renderizar as respostas deste comentário
+            // 🎯 CRÍTICO: Usa a lista COMPLETA de comentários para continuar a recursão, garantindo que o Neto seja buscado.
+            const respostasHtml = renderizarComentarios(comentarios, comentario.id, nestingLevel + 1);
+
+            // 3. Estrutura HTML do comentário individual
+            const comentarioItemHtml = `
+                <div class="comentario-item" data-comment-id="${comentario.id}" data-parent-id="${comentario.comentario_pai || 'null'}" ${indentStyle}>
+                    <div class="comentario-header">
+                        <span class="comentario-autor">${comentario.usuario_nome || 'Utilizador'}</span>
+                        <span class="comentario-data">${dataFormatada}</span>
+                    </div>
+                    ${normaHtml}
+                    
+                    ${comentarioDescricaoHtml}
+                    
+                    <div class="comentario-texto">${comentario.comentario}</div>
+                    
+                    <div class="comentario-actions">${actionsHtml}</div>
+                </div>
+            `;
+
+            // 4. Agrupamento em Contêiner de Thread (Apenas para o nível raiz)
+            if (parentId === null) {
+                // O comentário raiz se torna o CONTÊINER de toda a thread
+                htmlContent += `
+                    <div class="thread-container" data-thread-id="${comentario.id}">
+                        ${comentarioItemHtml}
+                        ${respostasHtml} 
+                    </div>
+                `;
+            } else {
+                // Os filhos são injetados diretamente
+                htmlContent += comentarioItemHtml;
+            }
+
+        });
+        
+        return htmlContent;
+    }
+
+
+    // --- FUNÇÃO CARREGAR COMENTÁRIOS DO POPUP (MANTIDA) ---
     async function carregarComentariosDoPopup() {
+        resetCommentFormState(); 
+        
         listaComentariosContainer.innerHTML = '<p>A carregar comentários...</p>';
         if (!normaAtualId) {
             listaComentariosContainer.innerHTML = '<p>Selecione uma norma para ver os comentários.</p>';
             return;
         }
-        const comentarios = await fetchData(`${API_BASE_URL}/normas/${normaAtualId}/comentarios/`);
+        
+        const comentariosResponse = await fetchData(`${API_BASE_URL}/normas/${normaAtualId}/comentarios/`);
         listaComentariosContainer.innerHTML = '';
 
+        const comentarios = comentariosResponse && Array.isArray(comentariosResponse) ? comentariosResponse : (comentariosResponse && comentariosResponse.results ? comentariosResponse.results : null);
+
         if (!comentarios || comentarios.length === 0) {
-            listaComentariosContainer.innerHTML = '<p>Nenhum comentário para esta norma ainda.</p>';
+            listaComentariosContainer.innerHTML = '<p style="text-align:center;color:#888;margin-top:20px;">Nenhum comentário para esta norma ainda.</p>';
         } else {
-            comentarios.forEach(comentario => {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'comment-item';
-                itemDiv.dataset.commentId = comentario.id;
-                const dataFormatada = new Date(comentario.data_criacao).toLocaleString('pt-BR');
-
-                let actionsHtml = `
-                    <button class="reply-btn" title="Comentar">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"></polyline><path d="M20 18v-2a4 4 0 0 0-4-4H4"></path></svg>
-                    </button>`;
-
-                // Verifica se o comentário pertence ao usuário logado para mostrar botões de edição/exclusão
-                if (infoUsuario && comentario.usuario === infoUsuario.id) {
-                    actionsHtml += `
-                        <button class="edit-btn" title="Alterar">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                        </button>
-                        <button class="delete-btn" title="Excluir">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                        </button>`;
-                }
-
-                itemDiv.innerHTML = `
-                    <div class="comment-header">
-                        <span class="comment-author">${comentario.usuario_nome || 'Utilizador'}</span>
-                        <span class="comment-date">${dataFormatada}</span>
-                    </div>
-                    <div class="comment-body">
-                        <p><strong>${comentario.descricao}</strong></p>
-                        <p>${comentario.comentario}</p>
-                    </div>
-                    <div class="comment-actions">${actionsHtml}</div>
-                `;
-                listaComentariosContainer.appendChild(itemDiv);
-            });
+            // Renderiza apenas os comentários raiz (parentId = null)
+            listaComentariosContainer.innerHTML = renderizarComentarios(comentarios, null, 0); 
         }
+    }
+
+
+    // --- FUNÇÃO PARA PREENCHER FORMULÁRIO PARA EDIÇÃO (MANTIDA) ---
+    function prepareEdit(commentId) {
+        const itemToEdit = listaComentariosContainer.querySelector(`.comentario-item[data-comment-id="${commentId}"]`);
+        if (!itemToEdit) return;
+        
+        const comentarioDescricaoElement = itemToEdit.querySelector('.comentario-descricao');
+        const descricao = comentarioDescricaoElement ? comentarioDescricaoElement.textContent.trim() : ''; 
+        const comentarioText = itemToEdit.querySelector('.comentario-texto').textContent.trim();
+        
+        document.getElementById('commentDescription').value = descricao;
+        document.getElementById('commentText').value = comentarioText;
+        
+        commentForm.dataset.mode = 'edit';
+        commentForm.dataset.commentId = commentId;
+        delete commentForm.dataset.commentPaiId; 
+        
+        const saveBtn = document.getElementById('saveCommentBtn');
+        saveBtn.textContent = 'Salvar Alteração';
+        saveBtn.classList.add('editing');
+
+        toggleDescriptionField(true); // Garante que o campo Descrição está visível
+        document.querySelector('.modal-col-form').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // --- FUNÇÃO PARA PREPARAR FORMULÁRIO PARA RESPOSTA ---
+    function prepareReply(commentId) {
+        const itemToEdit = listaComentariosContainer.querySelector(`.comentario-item[data-comment-id="${commentId}"]`);
+        if (!itemToEdit) return;
+
+        const parentAuthor = itemToEdit.querySelector('.comentario-autor').textContent.trim();
+
+        resetCommentFormState();
+        commentForm.dataset.mode = 'reply';
+        commentForm.dataset.commentPaiId = commentId;
+        
+        // CRÍTICO: ESCONDE o campo Descrição
+        toggleDescriptionField(false);
+        
+        document.getElementById('commentDescription').value = ''; 
+        document.getElementById('commentText').placeholder = `Responda ao comentário de ${parentAuthor}...`;
+
+        const saveBtn = document.getElementById('saveCommentBtn');
+        saveBtn.textContent = 'ENVIAR RESPOSTA'; 
+        
+        document.querySelector('.modal-col-form').scrollIntoView({ behavior: 'smooth' });
     }
 
     async function toggleFavorito() {
@@ -219,30 +354,77 @@ document.addEventListener('DOMContentLoaded', () => {
     closeButtons.forEach(button => button.addEventListener('click', closeModal));
     window.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
 
+    // --- MANIPULADOR DE SUBMISSÃO (FINAL CORREÇÃO DE PAYLOAD) ---
     commentForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         const descricao = document.getElementById('commentDescription').value;
         const comentario = document.getElementById('commentText').value;
+
         if (!comentario.trim()) { alert('O campo "Comentário" não pode estar vazio.'); return; }
-        const data = await fetchData(`${API_BASE_URL}/normas/${normaAtualId}/comentarios/`, { method: 'POST', body: JSON.stringify({ descricao, comentario }) });
+
+        const mode = commentForm.dataset.mode || 'create';
+        const commentId = commentForm.dataset.commentId;
+        const commentPaiId = commentForm.dataset.commentPaiId; 
+        
+        let url = '';
+        let method = '';
+        
+        // 💡 CRÍTICO: Corpo de dados limpo. Inclui o ID da Norma na requisição para a View processar
+        let bodyData = { 
+            comentario: comentario, 
+            norma: normaAtualId, 
+        };
+        
+        // 1. Define a URL e o método
+        if (mode === 'edit' && commentId) {
+            url = `${API_BASE_URL}/comentarios/${commentId}/`;
+            method = 'PUT';
+            // Em PUT, envia a descrição
+            bodyData.descricao = descricao; 
+
+        } else { // 'create' ou 'reply'
+            url = `${API_BASE_URL}/normas/${normaAtualId}/comentarios/`;
+            method = 'POST';
+            
+            // 2. Trata a Descrição e o Comentário Pai
+            if (mode === 'reply' && commentPaiId) {
+                bodyData.comentario_pai = commentPaiId; 
+                bodyData.descricao = ''; // Descrição deve ser vazia em respostas
+            } else { // 'create'
+                bodyData.descricao = descricao;
+                // Garante que comentario_pai não seja enviado se for create
+                delete bodyData.comentario_pai; 
+            }
+        }
+
+        const data = await fetchData(url, { 
+            method: method, 
+            body: JSON.stringify(bodyData)
+        });
+        
+        // --- LÓGICA DE ATUALIZAÇÃO PÓS-SUCESSO ---
         if (data) {
-            commentForm.reset();
+            resetCommentFormState(); 
+            
+            // Atualiza a tela
             await carregarComentariosDoPopup();
             await carregarDetalhesNorma(normaAtualId);
             await carregarMetricas();
         } else {
-            alert('Erro ao guardar comentário.');
+            alert(`Erro ao ${mode === 'edit' ? 'alterar' : 'guardar'} comentário. Verifique a API.`);
         }
     });
 
     listaComentariosContainer.addEventListener('click', async (event) => {
-        const target = event.target.closest('button'); 
+        const target = event.target.closest('.action-btn'); 
         if (!target) return;
 
-        const commentItem = target.closest('.comment-item');
+        const commentItem = target.closest('.comentario-item');
+        if (!commentItem) return;
+        
         const commentId = commentItem.dataset.commentId;
 
-        if (target.classList.contains('delete-btn')) {
+        if (target.classList.contains('btn-delete')) {
             if (confirm('Tem a certeza que deseja excluir este comentário?')) {
                 const success = await fetchData(`${API_BASE_URL}/comentarios/${commentId}/`, { method: 'DELETE' });
                 if (success) {
@@ -253,8 +435,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert('Não foi possível excluir o comentário.');
                 }
             }
+        } 
+        else if (target.classList.contains('btn-edit')) {
+            prepareEdit(commentId); 
+        } 
+        else if (target.classList.contains('btn-reply')) {
+            prepareReply(commentId);
         }
-        // Adicionar lógica para 'edit-btn' e 'reply-btn' aqui se necessário
     });
 
     listaNormasDiv.addEventListener('click', (event) => {

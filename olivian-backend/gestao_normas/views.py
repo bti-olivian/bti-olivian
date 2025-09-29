@@ -17,6 +17,13 @@ from django.contrib.auth.password_validation import validate_password
 from datetime import date
 from .permissions import IsOwnerOrReadOnly
 from rest_framework import generics
+from rest_framework import viewsets, mixins
+from rest_framework.decorators import action
+from django.shortcuts import get_object_or_404
+from .models import Comentario, NormaCliente, PerfilUsuario, Norma # Certifique-se de importar esses modelos
+from .serializers import ComentarioSerializer # Certifique-se de importar o Serializer
+from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated
 
 # --- IMPORTS DE MODELS ---
 from .models import (
@@ -432,6 +439,8 @@ class FavoritarNormaAPIView(APIView):
         except (Norma.DoesNotExist, PerfilUsuario.DoesNotExist):
             return Response({"error": "Norma ou Perfil nao encontrado"}, status=status.HTTP_404_NOT_FOUND)
         
+# Seu views.py (Classe ComentarioListCreateAPIView)
+
 class ComentarioListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = ComentarioSerializer
     permission_classes = [IsAuthenticated]
@@ -441,45 +450,67 @@ class ComentarioListCreateAPIView(generics.ListCreateAPIView):
             norma_pk = self.kwargs['norma_pk']
             cliente_do_usuario = self.request.user.perfilusuario.cliente
             norma_cliente = NormaCliente.objects.get(norma__pk=norma_pk, cliente=cliente_do_usuario)
-            return Comentario.objects.filter(norma_cliente=norma_cliente).order_by('-data_criacao')
+            
+            # 🎯 CORREÇÃO FINAL DE ORDENAÇÃO: 🎯
+            # Ordena por:
+            # 1. Comentário Pai (null vem primeiro, garantindo a ordem raiz-filho)
+            # 2. Data de Criação (para garantir a ordem cronológica dentro de cada nível)
+            
+            return Comentario.objects.filter(norma_cliente=norma_cliente).order_by(
+                'comentario_pai__id', 'data_criacao'
+            )
+            
         except (PerfilUsuario.DoesNotExist, NormaCliente.DoesNotExist, AttributeError):
             return Comentario.objects.none()
 
+    # ... (o método 'create' permanece o mesmo que você corrigiu na etapa anterior)
+
     def create(self, request, *args, **kwargs):
         try:
-            # PASSO 1: Encontrar a relacao Norma-Cliente correta
-            norma_pk = self.kwargs['norma_pk']
+            norma_pk = self.kwargs.get('norma_pk')
             cliente_do_usuario = request.user.perfilusuario.cliente
-            norma_cliente = NormaCliente.objects.get(norma__pk=norma_pk, cliente=cliente_do_usuario)
+            
+            # 1. Encontra a instância NormaCliente
+            norma_cliente = get_object_or_404(NormaCliente, norma__pk=norma_pk, cliente=cliente_do_usuario)
 
-            # PASSO 2: Validar os dados do formulario (descricao, comentario)
-            serializer = self.get_serializer(data=request.data)
+            # 2. Captura e Valida os dados
+            # Usamos uma cópia mutável do data
+            data = request.data.copy()
+
+            # 3. Trata o comentario_pai (ID bruto -> Objeto ForeignKey)
+            # Remove o ID bruto do payload para evitar erro de tipo (str vs instance)
+            comentario_pai_id = data.pop('comentario_pai', None)
+            comentario_pai_obj = None
+            
+            if comentario_pai_id:
+                # Converte o ID recebido (do front-end) para o objeto Comentario
+                comentario_pai_obj = get_object_or_404(Comentario, pk=comentario_pai_id) 
+                
+            # 4. Remove a chave 'norma' bruta que o front-end envia (não precisamos dela)
+            data.pop('norma', None) 
+
+            # 5. Valida os dados restantes
+            serializer = self.get_serializer(data=data)
             serializer.is_valid(raise_exception=True)
+            
+            # 6. Salva o comentário, injetando as instâncias como objetos
+            serializer.save(
+                usuario=request.user, 
+                norma_cliente=norma_cliente, # <--- OBJETO NormaCliente
+                comentario_pai=comentario_pai_obj # <--- OBJETO Comentario (Pai)
+            )
 
-            # PASSO 3: Salvar o comentario, injetando o usuario e a norma_cliente
-            serializer.save(usuario=request.user, norma_cliente=norma_cliente)
-
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         except PerfilUsuario.DoesNotExist:
-            return Response(
-                {"detail": "Nao foi possivel encontrar o perfil do seu usuario."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"detail": "Perfil de usuário não encontrado."}, status=status.HTTP_400_BAD_REQUEST)
         except NormaCliente.DoesNotExist:
-            return Response(
-                {"detail": "A relacao entre esta Norma e o Cliente nao existe. Associe-os no painel de administracao primeiro."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"detail": "A norma não está associada ao seu cliente."}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            # Para qualquer outro erro inesperado
-            print(f"Erro inesperado ao criar comentario: {e}")
-            return Response(
-                {"detail": "Ocorreu um erro interno ao tentar salvar o comentario."},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+            print(f"Erro inesperado ao criar comentário: {e}")
+            return Response({"detail": f"Ocorreu um erro interno ao tentar salvar o comentário. Detalhe: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
+
 class AuditoriaListCreateView(generics.ListCreateAPIView):
     serializer_class = AuditoriaSerializer
     permission_classes = [IsAuthenticated]

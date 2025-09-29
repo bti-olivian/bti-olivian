@@ -118,11 +118,35 @@ class Notificacao(models.Model):
 
 class Comentario(models.Model):
     # ALTERADO: Agora o comentArio pertence a uma relacao Norma-Cliente
-    norma_cliente = models.ForeignKey(NormaCliente, on_delete=models.CASCADE, related_name='comentarios')
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    norma_cliente = models.ForeignKey('NormaCliente', on_delete=models.CASCADE, related_name='comentarios')
+    usuario = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     descricao = models.CharField(max_length=100, blank=True)
     comentario = models.TextField()
+    
+    # 🎯 CAMPO CRÍTICO: Auto-referência para definir o comentário pai
+    comentario_pai = models.ForeignKey(
+        'self', 
+        on_delete=models.SET_NULL,
+        null=True, 
+        blank=True, 
+        related_name='respostas'
+    )
+    
     data_criacao = models.DateTimeField(auto_now_add=True)
+
+    # 🚀 LÓGICA DE EXCLUSÃO RECURSIVA (CASCADE NO DELETE)
+    def delete(self, *args, **kwargs):
+        """
+        Sobrescreve o método delete para remover recursivamente 
+        todas as respostas antes de remover o comentário pai.
+        """
+        # 1. Itera sobre todas as respostas (filhos) usando o related_name 'respostas'
+        for resposta in self.respostas.all():
+            # Chama o delete para cada resposta, garantindo a recursão
+            resposta.delete() 
+        
+        # 2. Executa a exclusão padrão do objeto pai
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return f'ComentArio de {self.usuario.username} em {self.norma_cliente.norma.norma}'

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acervo Técnico</title>
     <link rel="stylesheet" href="acervo_tecnico.css">
 </head>
+
 <body>
     <div class="main-container">
         <aside class="sidebar">
@@ -14,13 +16,24 @@
             </div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li class="nav-item active"><a href="/olivian-frontend/acervo_tecnico/acervo_tecnico.html"><img src="../Imagens/acervo-ativo.png" alt="Ícone Acervo" class="nav-icon"> Acervo Técnico</a></li>
-                    <li class="nav-item"><a href="#"><img src="../Imagens/relatorio.png" alt="Ícone Relatórios" class="nav-icon"> Relatórios</a></li>
-                    <li class="nav-item"><a href="#"><img src="../Imagens/dashboard.png" alt="Ícone Dashboard" class="nav-icon"> Dashboard</a></li>
-                    <li class="nav-item"><a href="/olivian-frontend/glossario/glossario.html"><img src="../Imagens/glossario.png" alt="Ícone Glossário" class="nav-icon"> Glossário</a></li>
-                    <li class="nav-item"><a href="/olivian-frontend/configuracoes/configuracoes.html"><img src="../Imagens/configuracoes.png" alt="Ícone Configurações" class="nav-icon"> Configurações</a></li>
-                    <li class="nav-item"><a href="/olivian-frontend/administrador/administrador.html"><img src="../Imagens/administrador.png" alt="Ícone Administrador" class="nav-icon"> Administrador</a></li>
-                    <li class="nav-item"><a href="../login/login.html"><img src="../Imagens/sair.png" alt="Ícone Sair" class="nav-icon"> Sair</a></li>
+                    <li class="nav-item active"><a href="/olivian-frontend/acervo_tecnico/acervo_tecnico.html"><img
+                                src="../Imagens/acervo-ativo.png" alt="Ícone Acervo" class="nav-icon"> Acervo
+                            Técnico</a></li>
+                    <li class="nav-item"><a href="#"><img src="../Imagens/relatorio.png" alt="Ícone Relatórios"
+                                class="nav-icon"> Relatórios</a></li>
+                    <li class="nav-item"><a href="#"><img src="../Imagens/dashboard.png" alt="Ícone Dashboard"
+                                class="nav-icon"> Dashboard</a></li>
+                    <li class="nav-item"><a href="/olivian-frontend/glossario/glossario.html"><img
+                                src="../Imagens/glossario.png" alt="Ícone Glossário" class="nav-icon"> Glossário</a>
+                    </li>
+                    <li class="nav-item"><a href="/olivian-frontend/configuracoes/configuracoes.html"><img
+                                src="../Imagens/configuracoes.png" alt="Ícone Configurações" class="nav-icon">
+                            Configurações</a></li>
+                    <li class="nav-item"><a href="/olivian-frontend/administrador/administrador.html"><img
+                                src="../Imagens/administrador.png" alt="Ícone Administrador" class="nav-icon">
+                            Administrador</a></li>
+                    <li class="nav-item"><a href="../login/login.html"><img src="../Imagens/sair.png" alt="Ícone Sair"
+                                class="nav-icon"> Sair</a></li>
                 </ul>
             </nav>
             <div class="sidebar-footer">
@@ -52,20 +65,31 @@
                     <div class="acervo-content-full">
                         <div class="normas-header">
                             <div class="search-box">
-                            <input type="text" id="filtro-normas-input" placeholder="Buscar norma ou textos de títulos">
-                            <img src="../Imagens/busca_normas.png" alt="Ícone de busca" class="search-icon">
-                        </div>
+                                <input type="text" id="filtro-normas-input"
+                                    placeholder="Buscar norma ou textos de títulos">
+                                <img src="../Imagens/busca_normas.png" alt="Ícone de busca" class="search-icon">
+                            </div>
                         </div>
                         <div class="normas-list-container"></div>
                     </div>
                 </div>
                 <div class="right-column">
                     <section class="metrics-section">
-                        <div class="metrics-card"><img src="../Imagens/renovacao.png" alt="Icone"><span class="card-title">renovação (dias)</span><span class="card-number" id="dias-renovacao">&nbsp;</span></div>
-                        <div class="metrics-card" id="filtro-comentadas-btn"><img src="../Imagens/normas_comentadas.png" alt="Icone"><span class="card-title">comentários</span><span class="card-number" id="normas-comentadas">&nbsp;</span></div>
-                        <div class="metrics-card" id="filtro-favoritas-btn"><img src="../Imagens/normas_favoritas.png" alt="Icone"><span class="card-title">normas favoritas</span><span class="card-number" id="normas-favoritas">&nbsp;</span></div>
-                        <div class="metrics-card" id="filtro-desatualizadas-btn"><img src="../Imagens/risco_nc.png" alt="Icone"><span class="card-title">risco de não conformidade</span><span class="card-number" id="risco-nao-conformidade">&nbsp;</span></div>
-                        <div class="metrics-card"><img src="../Imagens/prox_auditoria.png" alt="Icone"><span class="card-title">próxima auditoria</span><span class="card-number" id="dias-proxima-auditoria">*</span></div>
+                        <div class="metrics-card"><img src="../Imagens/renovacao.png" alt="Icone"><span
+                                class="card-title">renovação (dias)</span><span class="card-number"
+                                id="dias-renovacao">&nbsp;</span></div>
+                        <div class="metrics-card" id="filtro-comentadas-btn"><img src="../Imagens/normas_comentadas.png"
+                                alt="Icone"><span class="card-title">comentários</span><span class="card-number"
+                                id="normas-comentadas">&nbsp;</span></div>
+                        <div class="metrics-card" id="filtro-favoritas-btn"><img src="../Imagens/normas_favoritas.png"
+                                alt="Icone"><span class="card-title">normas favoritas</span><span class="card-number"
+                                id="normas-favoritas">&nbsp;</span></div>
+                        <div class="metrics-card" id="filtro-desatualizadas-btn"><img src="../Imagens/risco_nc.png"
+                                alt="Icone"><span class="card-title">risco de não conformidade</span><span
+                                class="card-number" id="risco-nao-conformidade">&nbsp;</span></div>
+                        <div class="metrics-card"><img src="../Imagens/prox_auditoria.png" alt="Icone"><span
+                                class="card-title">próxima auditoria</span><span class="card-number"
+                                id="dias-proxima-auditoria">*</span></div>
                     </section>
                     <section class="norma-details-container" style="display: none;">
                         <div class="details-header">
@@ -73,7 +97,12 @@
                             <div class="details-buttons">
                                 <span class="norma-label" id="norma-organizacao"></span>
                                 <button class="favorite-btn" id="favorite-btn" title="Favoritar Norma">
-                                    <svg class="favs-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                                    <svg class="favs-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24">
+                                        <polygon
+                                            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                        </polygon>
+                                    </svg>
                                 </button>
                                 <span class="comment-count-container" id="openCommentModalIcon">
                                     <span class="comment-count" id="comment-count">0</span>
@@ -84,8 +113,10 @@
                         <div class="details-content">
                             <span class="info-description" id="norma-descricao"></span>
                             <span class="info-idioma" id="norma-idioma"></span>
-                            <div class="info-group"><span class="info-label-atual" id="norma-revisao-atual"></span></div>
-                            <div class="info-group"><span class="info-label-cliente" id="norma-sua-revisao"></span></div>
+                            <div class="info-group"><span class="info-label-atual" id="norma-revisao-atual"></span>
+                            </div>
+                            <div class="info-group"><span class="info-label-cliente" id="norma-sua-revisao"></span>
+                            </div>
                             <div class="status-group">
                                 <div class="status-bolinha" id="norma-status-bolinha"></div>
                                 <span id="norma-status"></span>
@@ -96,16 +127,25 @@
                             </div>
                         </div>
                         <div class="selection-fields-grid">
-                            <div class="field-group"><span class="add-label">Centro de Custo:</span><select class="custom-select"><option selected disabled>Selecionar</option></select></div>
-                            <div class="field-group"><span class="add-label">Auditoria:</span><select class="custom-select"><option selected disabled>Selecionar</option></select></div>
-                            <div class="field-group"><span class="add-label">Certificação:</span><select class="custom-select"><option selected disabled>Selecionar</option></select></div>
+                            <div class="field-group"><span class="add-label">Centro de Custo:</span><select
+                                    class="custom-select">
+                                    <option selected disabled>Selecionar</option>
+                                </select></div>
+                            <div class="field-group"><span class="add-label">Auditoria:</span><select
+                                    class="custom-select">
+                                    <option selected disabled>Selecionar</option>
+                                </select></div>
+                            <div class="field-group"><span class="add-label">Certificação:</span><select
+                                    class="custom-select">
+                                    <option selected disabled>Selecionar</option>
+                                </select></div>
                         </div>
                     </section>
                 </div>
             </div>
         </main>
     </div>
-    
+
     <div id="commentModal" class="modal-overlay">
         <div class="modal-content-large">
             <button class="close-button">&times;</button>
@@ -113,29 +153,62 @@
                 <div class="modal-col-form">
                     <h2>Adicionar Comentário</h2>
                     <form id="commentForm">
-                        <div class="form-group"><label for="commentDescription">Descrição</label><input type="text" id="commentDescription" placeholder="Ex: Projeto xyz"></div>
-                        <div class="form-group"><label for="commentText">Comentário</label><textarea id="commentText" rows="4" placeholder="Digite aqui o seu comentário"></textarea></div>
-                        <div class="modal-actions"><button type="submit" class="button-primary">Salvar Comentário</button></div>
+                        <div class="form-group">
+                            <label for="commentDescription">Descrição</label>
+                            <input type="text" id="commentDescription" placeholder="Ex: Projeto xyz">
+                        </div>
+                        <div class="form-group">
+                            <label for="commentText">Comentário</label>
+                            <textarea id="commentText" rows="4" placeholder="Digite aqui o seu comentário"></textarea>
+                        </div>
+                        <div class="modal-actions">
+                            <button type="submit" class="button-primary" id="saveCommentBtn">Salvar Comentário</button>
+                        </div>
                     </form>
                 </div>
+
                 <div class="modal-col-list">
                     <h2>Comentários Existentes</h2>
-                    <div id="lista-comentarios-popup" class="popup-item-list"></div>
+                    <div id="lista-comentarios-popup" class="popup-item-list">
+
+                        <div class="comentario-item" data-comment-id="[ID_DINAMICO]">
+                            <div class="comentario-header">
+                                <span class="comentario-autor">[NOME DO USUÁRIO]</span>
+                                <span class="comentario-data">[DATA E HORA]</span>
+                            </div>
+
+                            <span class="nome-norma">[NOME DA NORMA COMENTADA]</span>
+
+                            <div class="comentario-descricao">[TEXTO DA DESCRIÇÃO (Ex: Projeto xyx)]</div>
+
+                            <div class="comentario-texto">[TEXTO PRINCIPAL DO COMENTÁRIO]
+                            </div>
+
+                            <div class="comentario-actions">
+                                <button class="action-btn btn-reply" title="Responder ao comentário" data-comment-id="${comentario.id}">Responder</button>
+                                <button class="action-btn btn-edit" title="Alterar">&#x270E;</button>
+                                <button class="action-btn btn-delete" title="Excluir">&#x1F5D1;</button>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <div id="vinculos-modal" class="modal-overlay">
         <div class="modal-content">
             <button class="close-button">&times;</button>
             <h2 id="vinculos-modal-title">Vínculos da Norma</h2>
             <div id="vinculos-modal-body">
-                </div>
+            </div>
         </div>
     </div>
 
-    <script src="../shared/utils.js"></script> <script src="acervo_tecnico.js"></script>
+    <script src="../shared/utils.js"></script>
+    <script src="acervo_tecnico.js"></script>
     <script src="acervo_tecnico.js"></script>
 </body>
+
 </html>
