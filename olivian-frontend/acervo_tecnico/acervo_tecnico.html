@@ -76,22 +76,22 @@
                 <div class="right-column">
                     <section class="metrics-section">
                         <div class="metrics-card"><img src="../Imagens/renovacao.png" alt="Icone"><span
-                                class="card-title">renovação (dias)</span><span class="card-number"
+                                class="card-title">Renovação Contratual (dias)</span><span class="card-number"
                                 id="dias-renovacao">&nbsp;</span></div>
                         <div class="metrics-card" id="filtro-comentadas-btn"><img src="../Imagens/normas_comentadas.png"
-                                alt="Icone"><span class="card-title">comentários</span><span class="card-number"
+                                alt="Icone"><span class="card-title">Comentários</span><span class="card-number"
                                 id="normas-comentadas">&nbsp;</span></div>
                         <div class="metrics-card" id="filtro-favoritas-btn"><img src="../Imagens/normas_favoritas.png"
-                                alt="Icone"><span class="card-title">normas favoritas</span><span class="card-number"
+                                alt="Icone"><span class="card-title">Normas Favoritas</span><span class="card-number"
                                 id="normas-favoritas">&nbsp;</span></div>
                         <div class="metrics-card" id="filtro-desatualizadas-btn"><img src="../Imagens/risco_nc.png"
-                                alt="Icone"><span class="card-title">risco de não conformidade</span><span
+                                alt="Icone"><span class="card-title">Risco de Não Conformidade</span><span
                                 class="card-number" id="risco-nao-conformidade">&nbsp;</span></div>
                         <div class="metrics-card"><img src="../Imagens/prox_auditoria.png" alt="Icone"><span
-                                class="card-title">próxima auditoria</span><span class="card-number"
+                                class="card-title">Próxima Auditoria</span><span class="card-number"
                                 id="dias-proxima-auditoria">*</span></div>
                     </section>
-                    <section class="norma-details-container" style="display: none;">
+                    <section class="norma-details-container">
                         <div class="details-header">
                             <h2 id="norma-titulo">Selecione uma norma</h2>
                             <div class="details-buttons">
@@ -168,29 +168,10 @@
                 </div>
 
                 <div class="modal-col-list">
-                    <h2>Comentários Existentes</h2>
+                    <h2>Comentários Existentes <span id="norma-comentada-titulo" class="norma-titulo-popup"></span></h2>
                     <div id="lista-comentarios-popup" class="popup-item-list">
-
-                        <div class="comentario-item" data-comment-id="[ID_DINAMICO]">
-                            <div class="comentario-header">
-                                <span class="comentario-autor">[NOME DO USUÁRIO]</span>
-                                <span class="comentario-data">[DATA E HORA]</span>
-                            </div>
-
-                            <span class="nome-norma">[NOME DA NORMA COMENTADA]</span>
-
-                            <div class="comentario-descricao">[TEXTO DA DESCRIÇÃO (Ex: Projeto xyx)]</div>
-
-                            <div class="comentario-texto">[TEXTO PRINCIPAL DO COMENTÁRIO]
-                            </div>
-
-                            <div class="comentario-actions">
-                                <button class="action-btn btn-reply" title="Responder ao comentário" data-comment-id="${comentario.id}">Responder</button>
-                                <button class="action-btn btn-edit" title="Alterar">&#x270E;</button>
-                                <button class="action-btn btn-delete" title="Excluir">&#x1F5D1;</button>
-                            </div>
-                        </div>
-
+                    </div>
+                    <div id="lista-comentarios-popup" class="popup-item-list">
                     </div>
                 </div>
             </div>
@@ -200,14 +181,13 @@
     <div id="vinculos-modal" class="modal-overlay">
         <div class="modal-content">
             <button class="close-button">&times;</button>
-            <h2 id="vinculos-modal-title">Vínculos da Norma</h2>
+            <h2 id="vinculos-modal-title">Vínculos da Norma</h2>ite
             <div id="vinculos-modal-body">
             </div>
         </div>
     </div>
 
     <script src="../shared/utils.js"></script>
-    <script src="acervo_tecnico.js"></script>
     <script src="acervo_tecnico.js"></script>
 </body>
 

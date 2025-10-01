@@ -244,6 +244,7 @@ html, body {
     padding: 15px;
     font-size: 13px;
     color: #8c005b;
+    overflow: hidden;
 }
 
 .blocoDados {

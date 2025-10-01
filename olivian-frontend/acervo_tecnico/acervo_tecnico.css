@@ -1,5 +1,5 @@
 /* ===============================
-   FONTES
+ FONTES
 ================================ */
 @font-face {
 font-family: 'Inter';
@@ -43,7 +43,7 @@ color: var(--text-color-dark);
 /* 💡 Ajuste: 'bold' pode ser muito forte. Sugestão: '600' ou 'normal' para o corpo, e 'bold' apenas em títulos. */
 overflow: hidden; 
 /* 💡 Ajuste: Removido 'overflow: hidden' do body para evitar problemas com modais/tooltips que precisam de scroll.
-   A restrição de overflow deve ser aplicada apenas à 'content-area'. */
+ A restrição de overflow deve ser aplicada apenas à 'content-area'. */
 }
 
 /* ======================== */
@@ -59,101 +59,101 @@ height: 100%;
 /* 3. Sidebar (Barra Lateral) */
 /* ======================== */
 .sidebar {
-    width: 200px;
-    background-color: #fcfcfc;
-    padding: 10px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    color: var(--text-color-dark);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+width: 200px;
+background-color: #fcfcfc;
+padding: 10px;
+box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+color: var(--text-color-dark);
+display: flex;
+flex-direction: column;
+justify-content: space-between;
 }
 
 .sidebar-header {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: -10px;
+text-align: center;
+display: flex;
+flex-direction: column;
+align-items: center;
+margin-top: -10px;
 }
 
 .sidebar-logo {
-    width: 250px;
-    margin-left: -20px;
+width: 250px;
+margin-left: -20px;
 }
 
 .sidebar-nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+list-style: none;
+padding: 0;
+margin: 0;
 }
 
 .sidebar-nav {
-    margin-bottom: 5px;
-    margin-top: -25px;
+margin-bottom: 5px;
+margin-top: -25px;
 }
 
 .sidebar-nav .nav-item img {
-  opacity: 0.3;
-  transition: opacity 0.3s ease;
+opacity: 0.3;
+transition: opacity 0.3s ease;
 }
 
 .sidebar-nav .nav-item:hover img {
-  opacity: 1;
+opacity: 1;
 }
 
 .sidebar-nav .nav-item:hover a {
-  color: rgb(0, 0, 0,0.5);
+color: rgb(0, 0, 0,0.5);
 }
 
 .sidebar-nav .nav-item.active a {
-  color: #9D3972;
+color: #9D3972;
 }
 
 .sidebar-nav .nav-item.active img {
-  opacity: 1;
+opacity: 1;
 }
 
 .sidebar-divider {
-    width: 5px;
-    height: 100%;
-    background-image: url('../Imagens/fundo_sistema.png');
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    background-position: center;
+width: 5px;
+height: 100%;
+background-image: url('../Imagens/fundo_sistema.png');
+background-repeat: no-repeat;
+background-size: 100% 100%;
+background-position: center;
 }
 
 .nav-item a {
-    display: flex;
-    align-items: center;
-    padding: 17px 15px;
-    color: #b1b1b1;
-    text-decoration: none;
-    border-radius: 8px;
-    transition: background-color 0.3s ease;
-    font-weight: bold;
-    font-size: 12px;
+display: flex;
+align-items: center;
+padding: 17px 15px;
+color: #b1b1b1;
+text-decoration: none;
+border-radius: 8px;
+transition: background-color 0.3s ease;
+font-weight: bold;
+font-size: 12px;
 }
 
 .nav-item a:hover {
-    background-color: var(--bg-card);
+background-color: var(--bg-card);
 }
 
 .nav-item img {
-    width: 20px;
-    margin-right: 10px;
+width: 20px;
+margin-right: 10px;
 }
 
 .sidebar-footer {
-    text-align: center;
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+text-align: center;
+margin-top: auto;
+display: flex;
+flex-direction: column;
+align-items: center;
 }
 
 .footer-logo {
-    width: 80px;
+width: 80px;
 }
 
 
@@ -172,51 +172,51 @@ flex-direction: column;
 
 /* --- Content Header (Topo da Aplicação) --- */
 .content-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: var(--text-color-dark);
-    background-color: #FCFCFC;
-    width: 100%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 7px 0;
-    margin-top: -3px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+color: var(--text-color-dark);
+background-color: #FCFCFC;
+width: 100%;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+padding: 7px 0;
+margin-top: -3px;
 }
 
 .user-profile {
-    padding-right: 20px;
-    font-size: 10px;
-    color: #2E0470;
-    font-weight: normal;
-    text-align: right;
+padding-right: 20px;
+font-size: 10px;
+color: #2E0470;
+font-weight: normal;
+text-align: right;
 }
 
 .user-profile-name {
-    font-size: 15px;
-    font-weight: bold;
+font-size: 15px;
+font-weight: bold;
 }
 
 .client-profile {
-    padding-left: 20px;
-    font-size: 10px;
-    color: #2E0470;
-    font-weight: normal;
+padding-left: 20px;
+font-size: 10px;
+color: #2E0470;
+font-weight: normal;
 }
 
 .client-profile-name {
-    font-size: 25px;
-    font-weight: bold;
+font-size: 25px;
+font-weight: bold;
 }
 
 .content-header .client-profile span,
 .content-header .user-profile span {
-    display: block;
+display: block;
 }
 
 /* Efeitos de Fade-in */
 .client-profile, .user-profile, .card-number {
-    opacity: 0;
-    transition: opacity 0.4s ease-in-out;
+opacity: 0;
+transition: opacity 0.4s ease-in-out;
 }
 
 
@@ -245,7 +245,7 @@ margin-bottom: 10px;
 }
 
 .card-title {
-font-size: 10px; /* Leve aumento para legibilidade */
+font-size: 11px; /* Leve aumento para legibilidade */
 color: #9C9C9C;
 margin-bottom: 5px;
 text-transform: none;
@@ -386,6 +386,7 @@ margin-bottom: 12px; /* Ajuste de margem */
 cursor: pointer;
 transition: transform 0.2s ease, background-color 0.2s ease;
 font-size: 12px;
+font-weight: bold;
 }
 
 .normas-header {
@@ -412,7 +413,7 @@ margin-right: 4px;
 .norma-details-container {
 flex-grow: 1;
 background-color: var(--bg-card-dark); /* 💡 Usando variável */
-padding: 20px; /* Aumento do padding */
+padding: 35px; /* Aumento do padding */
 border-radius: 10px;
 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 overflow-y: hidden; /* Permite scroll no conteúdo se for muito longo */
@@ -430,25 +431,25 @@ margin-bottom: 10px;
 font-size: 28px;
 color: rgba(0, 0, 0, 0.85);;
 font-weight: bold;
-margin: 0;
+margin: 8px 0px;
 }
 
-.details-buttons { display: flex; align-items: center; gap: 15px; }
+.details-buttons { display: flex; align-items: center; gap: 20px; }
 .details-buttons button { background: none; border: none; cursor: pointer; padding: 0; }
 .norma-label { font-size: 24px; font-weight:bold; } /* Destaque */
 .favs-icon { width: 26px; height: 26px; stroke: #6c757d; fill: none; transition: all 0.2s ease-in-out; }
 #favorite-btn.favorita .favs-icon { fill: #ffc107; stroke: #ffc107; }
 #favorite-btn:hover .favs-icon { transform: scale(1.15); }
 .comment-count-container { display: flex; align-items: center; gap: 5px; cursor: pointer; }
-.comment-icon { width: 22px; height: auto; }
-.comment-count { font-size: 22px; font-weight: bold; color: rgba(0, 0, 0, 0.5); }
+.comment-icon { width: 26px; height: auto; }
+.comment-count { font-size: 26px; font-weight: bold; color: rgba(0, 0, 0, 0.5); }
 
-.details-content { display: flex; flex-direction: column; gap: 10px; }
-.info-description { font-weight: 400; font-size: 13px; }
+.details-content { display: flex; flex-direction: column; gap: 18px; }
+.info-description { font-weight: bold; font-size: 15px; }
 .info-idioma { font-size: 12px; }
 .info-label-atual, .info-label-cliente { font-weight: bold; font-size: 15px; }
 .info-label-atual { color: #360AFA; }
-.status-group { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.status-group { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: bold; }
 .info-label-obs { font-weight: bold; font-size: 12px; }
 .info-value { font-size: 11px; font-weight:200; }
 
@@ -477,9 +478,10 @@ background-color: #fff;
 padding: 30px; /* Leve aumento */
 border-radius: 10px; 
 box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); 
-width: 90%; 
+width: 100%; 
 max-width: 950px; /* Aumento do max-width para melhor uso do espaço */
-height: 80vh; /* Altura máxima para melhor visualização do conteúdo interno */
+height: 80%; /* Altura máxima para melhor visualização do conteúdo interno */
+max-height: 95%; /* Garante que não ultrapasse a tela */
 display: flex;
 flex-direction: column;
 position: relative; 
@@ -490,6 +492,7 @@ display: grid;
 grid-template-columns: 350px 1fr; /* Coluna de formulário com largura fixa */
 gap: 30px;
 flex: 1; /* Permite que a grade preencha o espaço restante */
+height: 100%;
 min-height: 0;
 }
 .modal-col-form { 
@@ -499,10 +502,13 @@ display: flex;
 flex-direction: column;
 }
 .modal-col-list {
+overflow: auto;
 display: flex;
 flex-direction: column;
-min-height: 0;
+flex: 1;
+min-height: 100%;
 }
+
 .close-button { 
 position: absolute; 
 top: 15px; 
@@ -519,9 +525,10 @@ line-height: 1;
 .close-button:hover { color: #333; transform: rotate(90deg); transition: transform 0.3s; }
 .modal-content-large h2 { 
 margin-top: 0; 
-margin-bottom: 20px; 
+margin-bottom: 10px; 
 color: #333; 
-font-size: 22px;
+font-size: 20px;
+margin-right: 15px;
 }
 .form-group { margin-bottom: 12px; }
 .form-group label { 
@@ -592,124 +599,188 @@ background-color: #e0e0e0;
 /* ======================================================= */
 /* LISTA DE COMENTÁRIOS NO POPUP (REFINAMENTO FINAL) */
 /* ======================================================= */
-.popup-item-list { max-height: 400px; overflow-y: auto; padding-right: 10px; }
-
-/* ======================================================= */
-/* NOVO: REGRAS PARA O CONTÊINER DE THREAD (A CAIXA ARREDONDADA) */
-/* ======================================================= */
-
-.thread-container {
-    /* Mantém o estilo de card (borda, sombra, padding) */
-    background-color: #ffffff;
-    border-radius: 10px;
-    padding: 10px 15px;
-    
-    /* 🎯 ÚLTIMO RECURSO: ZERA MARGEM PARA FORÇAR OS CARDS A FICAREM JUNTOS */
-    margin-bottom: 5px !important; /* Diminui drasticamente a margem de separação */
-    
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-    border: 1px solid #eee;
-    padding-bottom: 0 !important;
-    display: flex;
-    flex-direction: column;
+.popup-item-list { 
+flex: 1; 
+    /* 🎯 CORREÇÃO 3: Removido max-height para permitir que o scroll funcione corretamente */
+padding-right: 10px; 
+padding-bottom: 20px; 
+margin-top: 10px; 
 }
 
-/* Estilo BASE do Comentário (USADO PELO PAI E FILHO) - SOBRESCRITA FORÇADA */
-.comentario-item { 
-    margin-bottom: 0 !important;
-    padding-bottom: 5px !important;
-}
-
-/* Regra para COMENTÁRIOS FILHOS (RESPOSTAS) - Garante a margem do JS */
-.comentario-item[data-parent-id]:not([data-parent-id="null"]) { 
-    /* Margem top para separar a resposta do comentário principal */
-    margin-top: 10px !important; /* Mantém a separação vertical APENAS entre os itens internos */
-    margin-bottom: 5px !important; 
-    padding-right: 10px;
-}
-
-.comentario-item:hover {
-background-color: var(--cor-fundo-hover);
-}
-
-/* ======================================================= */
-/* 2. TIPOGRAFIA E METADADOS */
-/* ======================================================= */
-
-.nome-norma {
+/* Nome da norma no título do popup */
+.norma-titulo-popup {
+font-size: 0.8em; 
 color: var(--cor-olvian-primaria);
-font-weight: bold;
-display: block; 
-margin-top: 3px; 
-margin-bottom: 5px; 
-font-size: 0.85em; 
+font-weight: 700;
+margin-left: 10px;
+display: inline-block;
+max-width: 65%; 
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+vertical-align: middle;
+float: right; 
+clear: right;
+margin-top: 5px; 
 }
 
+
+/* 🎯 CORREÇÃO 2: Bloco Total (Thread-Container) - Organização e Borda de Bloco */
+.thread-container {
+/* 🎯 Borda para mostrar o bloco total do comentário/thread */
+border: 1px solid #e0e0e0; 
+border-radius: 8px;
+padding: 10px; /* Padding interno para separar as bolhas da borda */
+margin-bottom: 15px;
+box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); 
+background-color: #ffffff; /* Fundo branco para a thread */
+display: flex;
+flex-direction: column;
+position: relative;
+border-left: 2px solid #e0e0e0;
+}
+
+/* 🎯 CORREÇÃO 2.1: A BOLHA CINZA E SUAS LINHAS DE CONEXÃO */
+.comentario-item { 
+margin-bottom: 0px !important; 
+padding: 8px 12px; 
+border-radius: 10px; 
+background-color: #f0f2f5; 
+position: relative;
+z-index: 5; 
+max-width: 98%; /* 🎯 Aumentado para preencher o bloco */
+min-width: 250px;
+margin-top: 5px; 
+}
+
+/* 2.1. Regra para COMENTÁRIOS FILHOS (RESPOSTAS) - Cria a linha VERTICAL à esquerda */
+.comentario-item[data-parent-id]:not([data-parent-id="null"]) { 
+margin-top: 5px !important; 
+margin-bottom: 0px !important; 
+margin-left: 0 !important;
+border-left: none; /* Linha vertical do filho */
+border-radius: 10px;
+padding-left: 12px;
+/* AJUSTE AQUI: Reduz o max-width para comentários filhos */
+max-width: calc(98% - var(--comment-reply-margin, 60px)); /* Reduz a largura considerando o recuo */
+/* Se você quer um min-width menor para filhos, defina aqui: */
+min-width: 150px; /* Exemplo: define um mínimo menor para filhos */ 
+}
+
+/* 2.2. LINHA HORIZONTAL (Quebra) no filho - Tampa a linha vertical para formar o "T" */
+.comentario-item[data-parent-id]:not([data-parent-id="null"])::before {
+content: '';
+position: absolute;
+top: 18px; 
+left: -2px; /* Inicia antes da borda esquerda (linha vertical) */
+width: 15px; 
+height: 2px;
+background-color: #f0f2f5; /* Cor da bolha para cobrir a linha */
+z-index: 6; 
+}
+
+/* 2.3. Linha vertical do PAI para o primeiro FILHO (Apenas o item logo após o PAI precisa da borda) */
+.thread-container > .comentario-item:first-child + .comentario-item[data-parent-id]:not([data-parent-id="null"]) {
+border-left: none; 
+}
+
+/* ======================================================= */
+/* 2. TIPOGRAFIA E METADADOS (VISUAL NOVO) */
+/* ======================================================= */
+
+/* Remove elementos não usados/duplicados */
+.nome-norma, .comentario-descricao { display: none; }
+
+
+/* 🎯 CORREÇÃO 3: Cabeçalho (Autor e Data) - Alinhamento e espaçamento */
 .comentario-header { 
 display: flex; 
-justify-content: space-between; 
-align-items: flex-start; 
+justify-content: flex-start;
+align-items:center; 
 margin-bottom: 2px;
 }
 
+/* Autor */
 .comentario-autor { 
 font-weight: 700 !important; 
 color: #333 !important;
-font-size: 0.95em !important; 
-display: inline-block; 
-margin-right: 5px;
+font-size: 0.85em !important; 
+margin-right: 48px; /* Mais espaço */
 }
 
+.comentario-titulo-pai {
+    font-weight: bold; /* Levemente menos negrito que o autor */
+    color: #555;
+    font-size: 0.85em;
+    margin-right: auto; /* CRÍTICO: Empurra a data para a direita */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 50%; /* Limita o tamanho do título para que a data caiba */
+}
+
+/* Data */
 .comentario-data { 
-font-size: 0.70em !important; 
+font-size: 0.75em !important; 
 color: #999 !important; 
 font-weight: normal !important;
-vertical-align: top;
+white-space: nowrap;
 margin-left: auto;
 }
 
-/* CORREÇÃO DO OVERFLOW E QUEBRA DE LINHA */
-.comentario-descricao { 
-font-weight: 600;
-color: #444;
-margin-bottom: 2px;
-font-size: 0.85em;
-word-break: break-word; 
-overflow-wrap: break-word;
-}
-
+/* Corpo do Comentário */
 .comentario-texto {
-margin: 2px 0 0 0; 
-font-size: 0.85em; 
-word-wrap: break-word; 
-font-weight: normal; 
-color: #555;
-word-break: break-word; 
-overflow-wrap: break-word;
+    margin: 3px 0 0 0; 
+    font-size: 12px;
+    text-align: justify; 
+    word-wrap: break-word; 
+    color: #555;
+    word-break: break-word; 
+    overflow-wrap: break-word;
 }
 
+/* 🎯 CORREÇÃO 1: Ações (Responder/Editar/Excluir) - Restaura Cores e Alinhamento */
 .comentario-actions {
-text-align: right;
-margin-top: 5px;
+text-align: right; 
+margin-top: 0px; 
+margin-left: 20px; /* Alinhado com a borda esquerda da bolha PAI + padding do thread */
+padding-bottom: 5px; 
+position: relative; 
+z-index: 10;
 }
 
-/* Estilo dos Botões de Ação (Responder como Link) */
-.action-btn { 
-background: none; border: none; cursor: pointer; padding: 5px; margin-left: 8px; line-height: 1; border-radius: 50%;
+.thread-container > .comentario-actions:first-of-type {
+margin-left: 20px; /* Alinhado sob a bolha PAI */
 }
+
+/* Ações em Comentários Filhos - Usando a variável CSS do JS para sincronizar recuo */
+.comentario-item[data-parent-id]:not([data-parent-id="null"]) + .comentario-actions {
+    /* Usa a variável --comment-reply-margin (definida no JS) */
+    margin-left: var(--comment-reply-margin); 
+}
+
+/* Estilo dos Botões de Ação */
+.action-btn { 
+    background: none; border: none; cursor: pointer; padding: 5px; margin-left: 5px; line-height: 1; border-radius: 50%;
+}
+.action-btn.btn-reply {
+    margin-left: 0;
+    /* 🎯 Restaura a cor azul do Responder (var(--cor-info) = #007bff) */
+    color: var(--cor-info) !important;
+    font-size: 0.7em !important;
+    font-weight: 600 !important; 
+    padding: 0 5px !important; 
+    text-transform: capitalize !important;
+}
+
+/* 🎯 Restaura a cor laranja do Editar */
+.action-btn.btn-edit { color: var(--cor-alerta) !important; }
+/* 🎯 Restaura a cor vermelha do Excluir */
+.action-btn.btn-delete { color: var(--cor-erro) !important; }
 
 .action-btn:hover {
 background-color: #f0f2f5;
 transform: scale(1.1);
-}
-
-.action-btn.btn-reply {
-color: #606770 !important; 
-font-size: 0.85em !important;
-font-weight: 600 !important; 
-padding: 0 5px !important; 
-border-radius: 0 !important;
-text-transform: capitalize !important;
 }
 
 .action-btn.btn-reply:hover {
@@ -717,11 +788,6 @@ background: none !important;
 text-decoration: underline; 
 transform: none !important;
 }
-
-/* Cores dos Ícones de Ação */
-.btn-reply { color: var(--cor-info); }
-.btn-edit { color: var(--cor-alerta); }
-.btn-delete { color: var(--cor-erro); }
 
 .action-btn svg {
 width: 16px;
@@ -731,18 +797,21 @@ stroke: currentColor;
 }
 
 /* REGRAS DE SOBRESCRITA (MANUTENÇÃO DE CLASSES ORIGINAIS) */
-/* Este bloco é mantido para garantir que as classes antigas NÃO QUEBREM O LAYOUT PRINCIPAL */
+/* As margens negativas foram ajustadas para não interferir no fluxo do layout. */
 .comentario-item {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
+margin-top: 0 !important;
+margin-bottom: 0 !important;
 }
 
+/* A caixa estática de exemplo no HTML precisa ser ignorada, se ainda existir */
+.comentario-item:last-of-type:not([data-thread-id]) {
+display: none !important;
+}
+
+/* ... (restante dos estilos externos MANTIDOS) ... */
 .comment-author { font-weight: bold; font-size: 0.9em; }
 .comment-date { font-size: 0.6em; color: #888; }
-.comment-body p { margin: 5px 0; font-size: 0.9em; word-wrap: break-word; font-weight: 200;}
 .comment-actions { text-align: right; margin-top: 10px; }
-
-/* ... (demais estilos de classes antigas) ... */
 
 #filtro-favoritas-btn, 
 #filtro-todas-btn, 

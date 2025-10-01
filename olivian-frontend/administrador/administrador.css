@@ -201,7 +201,7 @@ html, body {
     border: 1px solid var(--border-light);
     border-radius: 8px;
     background-color: var(--bg-card-light);
-    margin: 20px; /* Margem externa uniforme */
+    margin: 10px; /* Margem externa uniforme */
     padding: 30px; /* Aumenta o padding para respiro */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     display: flex;
@@ -218,7 +218,7 @@ html, body {
 }
 
 .head_admin p {
-    margin-bottom: 25px;
+    margin-bottom: 15px;
     color: var(--secondary-text);
     font-size: 15px;
 }

@@ -50,8 +50,23 @@ document.addEventListener('DOMContentLoaded', () => {
     async function openModal() { 
         if (modal) { 
             if (!infoUsuario) await carregarDadosUsuario();
-            await carregarComentariosDoPopup(); 
-            modal.style.display = 'flex'; 
+
+        // Garante que o ID da norma está atualizado (do último clique na lista)
+        const normaAtual = todasAsNormas.find(n => n.id == normaAtualId);
+
+        if (normaAtual && normaAtualId !== null) {
+            // Atualiza o título do modal com os dados da norma atualmente selecionada
+            const tituloNormaCompleto = `${normaAtual.organizacao} ${normaAtual.norma}`;
+            document.getElementById('norma-comentada-titulo').textContent = tituloNormaCompleto;
+        } else {
+             // Limpa ou define um fallback se nenhuma norma estiver selecionada
+             document.getElementById('norma-comentada-titulo').textContent = '';
+        }
+        
+        // Garante que os comentários corretos serão carregados
+        await carregarComentariosDoPopup(); 
+        
+        modal.style.display = 'flex'; 
         } 
     }
     function closeModal() { 
@@ -182,118 +197,129 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- FUNÇÃO PRINCIPAL DE RENDERIZAÇÃO COM LÓGICA ANINHADA (CORRIGIDA) ---
+    // --- FUNÇÃO PRINCIPAL DE RENDERIZAÇÃO COM LÓGICA ANINHADA ---
+    // --- FUNÇÃO PRINCIPAL DE RENDERIZAÇÃO COM LÓGICA ANINHADA ---
     function renderizarComentarios(comentarios, parentId = null, nestingLevel = 0) {
-        // 🎯 CRÍTICO: Usa a lógica de filtro PLANA, que é a mais segura para evitar falhas de serialização complexa.
-        const comentariosFiltrados = comentarios.filter(c => {
-            // Se c.comentario_pai é um objeto {id: X} ou um ID simples, extrai-o. Se é null, mantém null.
-            const comentarioPaiId = c.comentario_pai ? (c.comentario_pai.id || c.comentario_pai) : null;
-            
-            // Compara o ID extraído com o parentId (que é null no nível raiz ou um ID de comentário nos filhos)
-            return comentarioPaiId === parentId;
-        });
+    const comentariosFiltrados = comentarios.filter(c => {
+        const comentarioPaiId = c.comentario_pai ? (c.comentario_pai.id || c.comentario_pai) : null;
+        return comentarioPaiId === parentId;
+    });
+    
+    let htmlContent = '';
+    
+    comentariosFiltrados.forEach(comentario => {
+        const dataFormatada = new Date(comentario.data_criacao).toLocaleString('pt-BR');
         
-        let htmlContent = '';
+        let actionsHtml = `<button class="action-btn btn-reply" title="Responder ao comentário" data-comment-id="${comentario.id}">Responder</button>`;
+
+        if (infoUsuario && comentario.usuario === infoUsuario.id) {
+            actionsHtml += `
+                <button class="action-btn btn-edit" title="Alterar" data-comment-id="${comentario.id}">&#x270E;</button>
+                <button class="action-btn btn-delete" title="Excluir" data-comment-id="${comentario.id}">&#x1F5D1;</button>`;
+        }
         
-        const nomeNormaCompleto = `${document.getElementById('norma-organizacao').textContent} ${document.getElementById('norma-titulo').textContent}`;
+        let indentStyle = '';
+        
+        if (nestingLevel > 0) {
+            const baseRecuo = 60;
+            const paddingValue = baseRecuo + ((nestingLevel - 1) * 30);
+            indentStyle = `style="--comment-reply-margin: ${paddingValue}px;"`; 
+        } else {
+             indentStyle = 'style="--comment-reply-margin: 20px;"'; 
+        }
 
-        comentariosFiltrados.forEach(comentario => {
-            const dataFormatada = new Date(comentario.data_criacao).toLocaleString('pt-BR');
-            
-            // Lógica do Botão Responder/Editar/Excluir
-            let actionsHtml = `<button class="action-btn btn-reply" title="Responder ao comentário" data-comment-id="${comentario.id}">Responder</button>`;
+        const respostasHtml = renderizarComentarios(comentarios, comentario.id, nestingLevel + 1);
+        
+        // 🎯 NOVA LÓGICA: Inclui a descrição (título) no cabeçalho SÓ SE for comentário PAI
+        let tituloComentarioHtml = '';
+        if (nestingLevel === 0 && comentario.descricao && comentario.descricao.trim() !== '') {
+            // Inclui um span para o título, separado por um marcador (ponto ou traço)
+            tituloComentarioHtml = `<span class="comentario-titulo-pai"> &bull; ${comentario.descricao}</span>`;
+        }
 
-            if (infoUsuario && comentario.usuario === infoUsuario.id) {
-                actionsHtml += `
-                    <button class="action-btn btn-edit" title="Alterar" data-comment-id="${comentario.id}">&#x270E;</button>
-                    <button class="action-btn btn-delete" title="Excluir" data-comment-id="${comentario.id}">&#x1F5D1;</button>`;
-            }
-            
-            // LÓGICA DE VISIBILIDADE E RECÚO
-            let indentStyle = '';
-            let comentarioDescricaoHtml = '';
-            let normaHtml = '';
-            
-            if (nestingLevel === 0) {
-                // Se for RAIZ (Comentário Principal): EXIBE TUDO
-                normaHtml = `<span class="nome-norma">${nomeNormaCompleto}</span>`;
-                if (comentario.descricao && comentario.descricao.trim() !== '') {
-                    comentarioDescricaoHtml = `<div class="comentario-descricao">${comentario.descricao}</div>`;
-                }
-            } else {
-                // Se for RESPOSTA (Filho): ESCONDE TUDO E APLICA RECÚO
-                // Margem para recuo (30px) e margem top (10px) para separação
-                indentStyle = `style="margin-left: ${nestingLevel * 30}px; padding-left: 0px; margin-top: 10px;"`; 
-            }
-
-
-            // 2. Chamada recursiva para renderizar as respostas deste comentário
-            // 🎯 CRÍTICO: Usa a lista COMPLETA de comentários para continuar a recursão, garantindo que o Neto seja buscado.
-            const respostasHtml = renderizarComentarios(comentarios, comentario.id, nestingLevel + 1);
-
-            // 3. Estrutura HTML do comentário individual
-            const comentarioItemHtml = `
-                <div class="comentario-item" data-comment-id="${comentario.id}" data-parent-id="${comentario.comentario_pai || 'null'}" ${indentStyle}>
-                    <div class="comentario-header">
-                        <span class="comentario-autor">${comentario.usuario_nome || 'Utilizador'}</span>
-                        <span class="comentario-data">${dataFormatada}</span>
-                    </div>
-                    ${normaHtml}
+        const comentarioItemHtml = `
+            <div class="comentario-item" data-comment-id="${comentario.id}" data-parent-id="${comentario.comentario_pai ? (comentario.comentario_pai.id || comentario.comentario_pai) : 'null'}" ${indentStyle}>
+                <div class="comentario-header">
+                    <span class="comentario-autor">${comentario.usuario_nome || 'Utilizador'}</span>
                     
-                    ${comentarioDescricaoHtml}
-                    
-                    <div class="comentario-texto">${comentario.comentario}</div>
-                    
-                    <div class="comentario-actions">${actionsHtml}</div>
+                    ${tituloComentarioHtml} <span class="comentario-data">${dataFormatada}</span>
+                </div>
+                ${nestingLevel === 0 ? `<span class="nome-norma">${document.getElementById('norma-organizacao').textContent} ${document.getElementById('norma-titulo').textContent}</span>` : ''}
+
+                <div class="comentario-texto">${comentario.comentario}</div>
+                
+            </div>
+        `;
+
+        if (parentId === null) {
+            htmlContent += `
+                <div class="thread-container" data-thread-id="${comentario.id}" data-comment-id="${comentario.id}">
+                    ${comentarioItemHtml}
+                    <div class="comentario-actions" data-comment-id="${comentario.id}">${actionsHtml}</div> 
+                    ${respostasHtml} 
                 </div>
             `;
+        } else {
+            htmlContent += comentarioItemHtml;
+            htmlContent += `<div class="comentario-actions" data-comment-id="${comentario.id}" ${indentStyle} style="margin-top: 0;">${actionsHtml}</div>`;
+        }
 
-            // 4. Agrupamento em Contêiner de Thread (Apenas para o nível raiz)
-            if (parentId === null) {
-                // O comentário raiz se torna o CONTÊINER de toda a thread
-                htmlContent += `
-                    <div class="thread-container" data-thread-id="${comentario.id}">
-                        ${comentarioItemHtml}
-                        ${respostasHtml} 
-                    </div>
-                `;
-            } else {
-                // Os filhos são injetados diretamente
-                htmlContent += comentarioItemHtml;
-            }
-
-        });
-        
-        return htmlContent;
+    });
+    
+    return htmlContent;
     }
 
 
     // --- FUNÇÃO CARREGAR COMENTÁRIOS DO POPUP (MANTIDA) ---
+    // --- FUNÇÃO CARREGAR COMENTÁRIOS DO POPUP (CORRIGIDA) ---
     async function carregarComentariosDoPopup() {
-        resetCommentFormState(); 
-        
-        listaComentariosContainer.innerHTML = '<p>A carregar comentários...</p>';
-        if (!normaAtualId) {
-            listaComentariosContainer.innerHTML = '<p>Selecione uma norma para ver os comentários.</p>';
-            return;
-        }
-        
-        const comentariosResponse = await fetchData(`${API_BASE_URL}/normas/${normaAtualId}/comentarios/`);
-        listaComentariosContainer.innerHTML = '';
+    resetCommentFormState(); 
+    
+    listaComentariosContainer.innerHTML = '<p>A carregar comentários...</p>';
+    if (!normaAtualId) {
+        listaComentariosContainer.innerHTML = '<p>Selecione uma norma para ver os comentários.</p>';
+        return;
+    }
+    
+    const comentariosResponse = await fetchData(`${API_BASE_URL}/normas/${normaAtualId}/comentarios/`);
+    listaComentariosContainer.innerHTML = '';
 
-        const comentarios = comentariosResponse && Array.isArray(comentariosResponse) ? comentariosResponse : (comentariosResponse && comentariosResponse.results ? comentariosResponse.results : null);
+    const comentarios = comentariosResponse && Array.isArray(comentariosResponse) ? comentariosResponse : (comentariosResponse && comentariosResponse.results ? comentariosResponse.results : null);
 
-        if (!comentarios || comentarios.length === 0) {
-            listaComentariosContainer.innerHTML = '<p style="text-align:center;color:#888;margin-top:20px;">Nenhum comentário para esta norma ainda.</p>';
-        } else {
-            // Renderiza apenas os comentários raiz (parentId = null)
-            listaComentariosContainer.innerHTML = renderizarComentarios(comentarios, null, 0); 
-        }
+    if (!comentarios || comentarios.length === 0) {
+        listaComentariosContainer.innerHTML = '<p style="text-align:center;color:#888;margin-top:20px;">Nenhum comentário para esta norma ainda.</p>';
+    } else {
+        
+        // 🎯 CORREÇÃO CRÍTICA: Ordena os comentários do mais novo para o mais antigo.
+        // Isso é feito em duas etapas: ordenar pela data_criacao e depois inverter.
+        // A data precisa ser convertida para garantir a ordenação correta.
+        comentarios.sort((a, b) => new Date(b.data_criacao) - new Date(a.data_criacao));
+        
+        // Se a API retornar já ordenado do mais antigo para o mais novo,
+        // você pode apenas inverter: comentarios.reverse(); 
+        
+        // No entanto, para a lógica de thread, precisamos garantir que a thread principal (comentario_pai: null)
+        // seja ordenada do mais novo, mas as respostas (filhos) sejam ordenadas por data crescente.
+        
+        // 🎯 Revertendo apenas a lista principal para o threading (raiz)
+        const comentariosRaiz = comentarios.filter(c => c.comentario_pai === null || c.comentario_pai === undefined);
+        const respostas = comentarios.filter(c => c.comentario_pai !== null && c.comentario_pai !== undefined);
+
+        // Ordena as threads principais do MAIS NOVO (topo) para o MAIS ANTIGO (baixo)
+        comentariosRaiz.sort((a, b) => new Date(b.data_criacao) - new Date(a.data_criacao));
+
+        // Recombina para renderização (o renderizarComentarios fará a ordenação dos filhos)
+        const listaFinal = [...comentariosRaiz, ...respostas];
+
+
+        listaComentariosContainer.innerHTML = renderizarComentarios(listaFinal, null, 0); 
+    }
     }
 
 
     // --- FUNÇÃO PARA PREENCHER FORMULÁRIO PARA EDIÇÃO (MANTIDA) ---
     function prepareEdit(commentId) {
+        // Busca o item de comentário, não o bloco de ações
         const itemToEdit = listaComentariosContainer.querySelector(`.comentario-item[data-comment-id="${commentId}"]`);
         if (!itemToEdit) return;
         
@@ -318,6 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- FUNÇÃO PARA PREPARAR FORMULÁRIO PARA RESPOSTA ---
     function prepareReply(commentId) {
+        // Busca o item de comentário, não o bloco de ações
         const itemToEdit = listaComentariosContainer.querySelector(`.comentario-item[data-comment-id="${commentId}"]`);
         if (!itemToEdit) return;
 
@@ -369,7 +396,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let url = '';
         let method = '';
         
-        // 💡 CRÍTICO: Corpo de dados limpo. Inclui o ID da Norma na requisição para a View processar
         let bodyData = { 
             comentario: comentario, 
             norma: normaAtualId, 
@@ -379,20 +405,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mode === 'edit' && commentId) {
             url = `${API_BASE_URL}/comentarios/${commentId}/`;
             method = 'PUT';
-            // Em PUT, envia a descrição
             bodyData.descricao = descricao; 
 
         } else { // 'create' ou 'reply'
             url = `${API_BASE_URL}/normas/${normaAtualId}/comentarios/`;
             method = 'POST';
             
-            // 2. Trata a Descrição e o Comentário Pai
             if (mode === 'reply' && commentPaiId) {
                 bodyData.comentario_pai = commentPaiId; 
-                bodyData.descricao = ''; // Descrição deve ser vazia em respostas
+                bodyData.descricao = ''; 
             } else { // 'create'
                 bodyData.descricao = descricao;
-                // Garante que comentario_pai não seja enviado se for create
                 delete bodyData.comentario_pai; 
             }
         }
@@ -402,11 +425,9 @@ document.addEventListener('DOMContentLoaded', () => {
             body: JSON.stringify(bodyData)
         });
         
-        // --- LÓGICA DE ATUALIZAÇÃO PÓS-SUCESSO ---
         if (data) {
             resetCommentFormState(); 
             
-            // Atualiza a tela
             await carregarComentariosDoPopup();
             await carregarDetalhesNorma(normaAtualId);
             await carregarMetricas();
@@ -415,14 +436,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- Event Listener para Ações (Funcionalidade) ---
     listaComentariosContainer.addEventListener('click', async (event) => {
         const target = event.target.closest('.action-btn'); 
         if (!target) return;
 
-        const commentItem = target.closest('.comentario-item');
-        if (!commentItem) return;
+        // O ID é pego do bloco de ações, que sempre acompanha o comentário.
+        const actionBlock = target.closest('.comentario-actions');
+        if (!actionBlock) return;
         
-        const commentId = commentItem.dataset.commentId;
+        const commentId = actionBlock.dataset.commentId; // Pega o ID do bloco de ações
 
         if (target.classList.contains('btn-delete')) {
             if (confirm('Tem a certeza que deseja excluir este comentário?')) {
