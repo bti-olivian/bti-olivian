@@ -60,23 +60,28 @@ from .serializers import (
     UserRegistrationSerializer,
 )
 
+
 class NormaListCreateView(generics.ListCreateAPIView):
     queryset = Norma.objects.all()
     serializer_class = NormaSerializer
     permission_classes = [IsAuthenticated]
 
+
 class NormaDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Norma.objects.all()
     serializer_class = NormaSerializer
+
 
 class ClienteListCreateView(generics.ListCreateAPIView):
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
 
+
 class UserRegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
     permission_classes = [AllowAny]
+
 
 class MinhasNormasListAPIView(generics.ListAPIView):
     serializer_class = NormaSerializer
@@ -98,6 +103,7 @@ class MinhasNormasListAPIView(generics.ListAPIView):
         except PerfilUsuario.DoesNotExist:
             return Norma.objects.none()
 
+
 # CORREÇÃO: Atualizada para usar a nova permissão como checagem de administrador
 class GerenciarFuncionariosView(generics.ListAPIView):
     serializer_class = PerfilUsuarioSerializer
@@ -116,6 +122,7 @@ class GerenciarFuncionariosView(generics.ListAPIView):
 
         cliente_do_usuario = perfil_do_usuario.cliente
         return PerfilUsuario.objects.filter(cliente=cliente_do_usuario)
+
 
 # ----------------------------------------------------
 # NOVA VIEW: Listar e Atualizar Permissões de Administradores
@@ -218,6 +225,7 @@ class AdminPermissoesBulkUpdateView(APIView):
 
         return Response({"detail": f"{len(updates)} perfis de usuários atualizados com sucesso."}, status=status.HTTP_200_OK)
 
+
 # ----------------------------------------------------
 # FIM DAS NOVAS VIEWS
 # ----------------------------------------------------
@@ -228,12 +236,14 @@ class RevisaoSecundariaHistoricoCreateAPIView(generics.CreateAPIView):
     serializer_class = RevisaoSecundariaHistoricoSerializer
     permission_classes = [IsAuthenticated]
 
+
 class NotificacaoListAPIView(generics.ListAPIView):
     serializer_class = NotificacaoSerializer
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
         return Notificacao.objects.filter(usuario=self.request.user).order_by('-data_criacao')
+
 
 class NotificacaoDetailAPIView(generics.RetrieveUpdateAPIView):
     queryset = Notificacao.objects.all()
@@ -242,6 +252,7 @@ class NotificacaoDetailAPIView(generics.RetrieveUpdateAPIView):
     
     def get_queryset(self):
         return Notificacao.objects.filter(usuario=self.request.user)
+
 
 class CustomLoginAPIView(APIView):
     permission_classes = [AllowAny]
@@ -288,6 +299,7 @@ Equipe Olivian."""
             return Response({"detail": "E-mail de redefinicao enviado com sucesso."})
         except Exception as e:
             return Response({"detail": f"Erro ao enviar o e-mail: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class PasswordResetConfirmAPIView(APIView):
     permission_classes = [AllowAny]

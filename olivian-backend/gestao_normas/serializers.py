@@ -8,7 +8,9 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from .models import Comentario # Assumindo que Comentario está importado
 
+
 User = get_user_model()
+
 
 # --- SERIALIZADORES DE PERFIL DE USUÁRIO (ATUALIZADOS) ---
 
@@ -50,8 +52,8 @@ class PerfilUsuarioSerializer(serializers.ModelSerializer):
         model = PerfilUsuario
         # CAMPOS ATUALIZADOS: Removendo as permissões da raiz, e adicionando 'permissoes'
         fields = [
-            'username', 
-            'email', 
+            'username',
+            'email',
             'cliente',
             'permissoes', # <--- NOVO CAMPO CALCULADO
         ]
@@ -82,8 +84,8 @@ class NormaSerializer(serializers.ModelSerializer):
         model = Norma
         # A API de detalhes usara apenas esses campos.
         fields = [
-            'id', 'organizacao', 'norma', 'titulo', 'revisao_atual', 
-            'idioma', 'formato', 
+            'id', 'organizacao', 'norma', 'titulo', 'revisao_atual',
+            'idioma', 'formato',
             'sua_revisao', 'status_atualizado', 'is_favorita', 'observacoes', 'comentarios_count'
         ]
 
@@ -230,21 +232,13 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
     
 # Em gestao_normas/serializers.py
 
-# Seu serializers.py
-
-# Seu serializers.py
-
-# Seu serializers.py
-
-# Seu serializers.py
-
 class ComentarioSerializer(serializers.ModelSerializer):
     # Traz o nome do usuario que fez o comentario (apenas para leitura)
     usuario_nome = serializers.CharField(source='usuario.get_full_name', read_only=True)
     
     # 🎯 CORREÇÃO CRÍTICA 1: Garante que o usuário seja retornado como ID.
     # Isso é fundamental para que o Front-end possa comparar o autor.
-    usuario = serializers.PrimaryKeyRelatedField(read_only=True) 
+    usuario = serializers.PrimaryKeyRelatedField(read_only=True)
     
     # 🎯 CORREÇÃO CRÍTICA 2: Garante que o comentario_pai seja retornado como ID numérico.
     comentario_pai = serializers.PrimaryKeyRelatedField(queryset=Comentario.objects.all(), allow_null=True, required=False)
@@ -256,8 +250,8 @@ class ComentarioSerializer(serializers.ModelSerializer):
         model = Comentario
         # Incluímos 'respostas' no fields
         fields = [
-            'id', 'norma_cliente', 'usuario', 'usuario_nome', 
-            'comentario_pai', 'descricao', 'comentario', 
+            'id', 'norma_cliente', 'usuario', 'usuario_nome',
+            'comentario_pai', 'descricao', 'comentario',
             'data_criacao', 'respostas'
         ]
 
@@ -277,6 +271,7 @@ class ComentarioSerializer(serializers.ModelSerializer):
         # Passamos a lista de filhos para o Serializer, garantindo que o neto seja incluído no payload.
         serializer = ComentarioSerializer(obj.respostas.all(), many=True)
         return serializer.data
+
 
 # No final de gestao_normas/serializers.py
 

@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (normaAtual && normaAtualId !== null) {
             // Atualiza o título do modal com os dados da norma atualmente selecionada
-            const tituloNormaCompleto = `${normaAtual.organizacao} ${normaAtual.norma}`;
+            const tituloNormaCompleto = `${normaAtual.norma}`; // Removemos a organização do título
             document.getElementById('norma-comentada-titulo').textContent = tituloNormaCompleto;
         } else {
              // Limpa ou define um fallback se nenhuma norma estiver selecionada
@@ -197,12 +197,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- FUNÇÃO PRINCIPAL DE RENDERIZAÇÃO COM LÓGICA ANINHADA ---
-    // --- FUNÇÃO PRINCIPAL DE RENDERIZAÇÃO COM LÓGICA ANINHADA ---
+    // --- FUNÇÃO PRINCIPAL DE RENDERIZAÇÃO COM LÓGICA ANINHADA (FINAL CORRIGIDA) ---
     function renderizarComentarios(comentarios, parentId = null, nestingLevel = 0) {
     const comentariosFiltrados = comentarios.filter(c => {
         const comentarioPaiId = c.comentario_pai ? (c.comentario_pai.id || c.comentario_pai) : null;
-        return comentarioPaiId === parentId;
+        return comentarioPaiId == parentId;
     });
     
     let htmlContent = '';
@@ -218,22 +217,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="action-btn btn-delete" title="Excluir" data-comment-id="${comentario.id}">&#x1F5D1;</button>`;
         }
         
-        let indentStyle = '';
+        let indentStyle = ''; 
+        let indentStyleActions = ''; 
         
+        // CÁLCULO DE RECÚO E LARGURA
         if (nestingLevel > 0) {
-            const baseRecuo = 60;
-            const paddingValue = baseRecuo + ((nestingLevel - 1) * 30);
-            indentStyle = `style="--comment-reply-margin: ${paddingValue}px;"`; 
-        } else {
-             indentStyle = 'style="--comment-reply-margin: 20px;"'; 
-        }
+            // Lógica incremental para o recuo
+            const baseMargin = 25; 
+            const paddingIncremento = 30;
+            const marginValue = baseMargin + ((nestingLevel - 1) * paddingIncremento);
+            const widthAdjustValue = marginValue; 
+            
+            // 🎯 CRÍTICO: Variável CSS FIXA em 40px para o desenho da linha.
+            const variableValueFixed = 40; 
 
+            // FILHO/NETO: Injeta recuo/margem e largura calculada.
+            const calculatedStyles = `padding-left: 12px; margin-left: ${marginValue}px; width: calc(100% - ${widthAdjustValue}px); --comment-reply-margin: ${variableValueFixed}px;`;
+            indentStyle = `style="${calculatedStyles}"`;
+            
+            // Ações: Mesma lógica de margem/largura, mais alinhamento.
+            indentStyleActions = `style="margin-left: ${marginValue}px; width: calc(100% - ${widthAdjustValue}px); margin-top: 0; text-align: right;"`; 
+
+        } else {
+             // PAI (Nível 0): Sem margem lateral de recuo.
+             indentStyle = 'style="padding-left: 12px; margin-left: 0 !important; width: 100% !important; --comment-reply-margin: 20px;"'; 
+             
+             // Ações PAI: Largura total e alinhamento à direita.
+             indentStyleActions = 'style="margin-left: 0 !important; width: 100% !important; text-align: right;"';
+        }
+        
         const respostasHtml = renderizarComentarios(comentarios, comentario.id, nestingLevel + 1);
         
-        // 🎯 NOVA LÓGICA: Inclui a descrição (título) no cabeçalho SÓ SE for comentário PAI
+        // ... (HTML do título PAI mantido) ...
         let tituloComentarioHtml = '';
         if (nestingLevel === 0 && comentario.descricao && comentario.descricao.trim() !== '') {
-            // Inclui um span para o título, separado por um marcador (ponto ou traço)
             tituloComentarioHtml = `<span class="comentario-titulo-pai"> &bull; ${comentario.descricao}</span>`;
         }
 
@@ -241,27 +258,31 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="comentario-item" data-comment-id="${comentario.id}" data-parent-id="${comentario.comentario_pai ? (comentario.comentario_pai.id || comentario.comentario_pai) : 'null'}" ${indentStyle}>
                 <div class="comentario-header">
                     <span class="comentario-autor">${comentario.usuario_nome || 'Utilizador'}</span>
-                    
-                    ${tituloComentarioHtml} <span class="comentario-data">${dataFormatada}</span>
+                    ${tituloComentarioHtml}
+                    <span class="comentario-data">${dataFormatada}</span>
                 </div>
-                ${nestingLevel === 0 ? `<span class="nome-norma">${document.getElementById('norma-organizacao').textContent} ${document.getElementById('norma-titulo').textContent}</span>` : ''}
-
+                ${nestingLevel === 0 ? `<span class="nome-norma">${document.getElementById('norma-comentada-titulo').textContent}</span>` : ''}
+                
                 <div class="comentario-texto">${comentario.comentario}</div>
                 
             </div>
         `;
 
         if (parentId === null) {
+            // Comentário RAIZ
             htmlContent += `
                 <div class="thread-container" data-thread-id="${comentario.id}" data-comment-id="${comentario.id}">
                     ${comentarioItemHtml}
-                    <div class="comentario-actions" data-comment-id="${comentario.id}">${actionsHtml}</div> 
+                    <div class="comentario-actions" data-comment-id="${comentario.id}" ${indentStyleActions}>${actionsHtml}</div> 
                     ${respostasHtml} 
                 </div>
             `;
         } else {
             htmlContent += comentarioItemHtml;
-            htmlContent += `<div class="comentario-actions" data-comment-id="${comentario.id}" ${indentStyle} style="margin-top: 0;">${actionsHtml}</div>`;
+            // Ações FILHO/NETO: Usa o estilo mesclado
+            htmlContent += `<div class="comentario-actions" data-comment-id="${comentario.id}" ${indentStyleActions}>${actionsHtml}</div>`;
+            
+            htmlContent += respostasHtml; 
         }
 
     });
@@ -271,49 +292,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // --- FUNÇÃO CARREGAR COMENTÁRIOS DO POPUP (MANTIDA) ---
-    // --- FUNÇÃO CARREGAR COMENTÁRIOS DO POPUP (CORRIGIDA) ---
     async function carregarComentariosDoPopup() {
-    resetCommentFormState(); 
-    
-    listaComentariosContainer.innerHTML = '<p>A carregar comentários...</p>';
-    if (!normaAtualId) {
-        listaComentariosContainer.innerHTML = '<p>Selecione uma norma para ver os comentários.</p>';
-        return;
-    }
-    
-    const comentariosResponse = await fetchData(`${API_BASE_URL}/normas/${normaAtualId}/comentarios/`);
-    listaComentariosContainer.innerHTML = '';
-
-    const comentarios = comentariosResponse && Array.isArray(comentariosResponse) ? comentariosResponse : (comentariosResponse && comentariosResponse.results ? comentariosResponse.results : null);
-
-    if (!comentarios || comentarios.length === 0) {
-        listaComentariosContainer.innerHTML = '<p style="text-align:center;color:#888;margin-top:20px;">Nenhum comentário para esta norma ainda.</p>';
-    } else {
+        resetCommentFormState(); 
         
-        // 🎯 CORREÇÃO CRÍTICA: Ordena os comentários do mais novo para o mais antigo.
-        // Isso é feito em duas etapas: ordenar pela data_criacao e depois inverter.
-        // A data precisa ser convertida para garantir a ordenação correta.
-        comentarios.sort((a, b) => new Date(b.data_criacao) - new Date(a.data_criacao));
+        listaComentariosContainer.innerHTML = '<p>A carregar comentários...</p>';
+        if (!normaAtualId) {
+            listaComentariosContainer.innerHTML = '<p>Selecione uma norma para ver os comentários.</p>';
+            return;
+        }
         
-        // Se a API retornar já ordenado do mais antigo para o mais novo,
-        // você pode apenas inverter: comentarios.reverse(); 
-        
-        // No entanto, para a lógica de thread, precisamos garantir que a thread principal (comentario_pai: null)
-        // seja ordenada do mais novo, mas as respostas (filhos) sejam ordenadas por data crescente.
-        
-        // 🎯 Revertendo apenas a lista principal para o threading (raiz)
-        const comentariosRaiz = comentarios.filter(c => c.comentario_pai === null || c.comentario_pai === undefined);
-        const respostas = comentarios.filter(c => c.comentario_pai !== null && c.comentario_pai !== undefined);
+        const comentariosResponse = await fetchData(`${API_BASE_URL}/normas/${normaAtualId}/comentarios/`);
+        listaComentariosContainer.innerHTML = '';
 
-        // Ordena as threads principais do MAIS NOVO (topo) para o MAIS ANTIGO (baixo)
-        comentariosRaiz.sort((a, b) => new Date(b.data_criacao) - new Date(a.data_criacao));
+        const comentarios = comentariosResponse && Array.isArray(comentariosResponse) ? comentariosResponse : (comentariosResponse && comentariosResponse.results ? comentariosResponse.results : null);
 
-        // Recombina para renderização (o renderizarComentarios fará a ordenação dos filhos)
-        const listaFinal = [...comentariosRaiz, ...respostas];
+        if (!comentarios || comentarios.length === 0) {
+            listaComentariosContainer.innerHTML = '<p style="text-align:center;color:#888;margin-top:20px;">Nenhum comentário para esta norma ainda.</p>';
+        } else {
+            
+            // Separa os comentários raiz para ordenação
+            const comentariosRaiz = comentarios.filter(c => c.comentario_pai === null || c.comentario_pai === undefined);
+            const respostas = comentarios.filter(c => c.comentario_pai !== null && c.comentario_pai !== undefined);
 
+            // Ordena as threads principais do MAIS NOVO (topo) para o MAIS ANTIGO (baixo)
+            comentariosRaiz.sort((a, b) => new Date(b.data_criacao) - new Date(a.data_criacao));
 
-        listaComentariosContainer.innerHTML = renderizarComentarios(listaFinal, null, 0); 
-    }
+            // Recombina para renderização (a função renderizarComentarios fará o threading)
+            const listaFinal = [...comentariosRaiz, ...respostas];
+
+            listaComentariosContainer.innerHTML = renderizarComentarios(listaFinal, null, 0); 
+        }
     }
 
 
@@ -323,8 +331,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const itemToEdit = listaComentariosContainer.querySelector(`.comentario-item[data-comment-id="${commentId}"]`);
         if (!itemToEdit) return;
         
-        const comentarioDescricaoElement = itemToEdit.querySelector('.comentario-descricao');
-        const descricao = comentarioDescricaoElement ? comentarioDescricaoElement.textContent.trim() : ''; 
+        const comentarioDescricaoElement = itemToEdit.querySelector('.comentario-titulo-pai');
+        // O valor da descrição está após " • "
+        const descricao = comentarioDescricaoElement ? comentarioDescricaoElement.textContent.replace(' • ', '').trim() : ''; 
         const comentarioText = itemToEdit.querySelector('.comentario-texto').textContent.trim();
         
         document.getElementById('commentDescription').value = descricao;
@@ -342,7 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('.modal-col-form').scrollIntoView({ behavior: 'smooth' });
     }
 
-    // --- FUNÇÃO PARA PREPARAR FORMULÁRIO PARA RESPOSTA ---
+    // --- FUNÇÃO PARA PREPARAR FORMULÁRIO PARA RESPOSTA (MANTIDA) ---
     function prepareReply(commentId) {
         // Busca o item de comentário, não o bloco de ações
         const itemToEdit = listaComentariosContainer.querySelector(`.comentario-item[data-comment-id="${commentId}"]`);
@@ -376,12 +385,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- EVENT LISTENERS ---
+    // --- EVENT LISTENERS (MANTIDOS) ---
     if (openBtnIcon) openBtnIcon.addEventListener('click', openModal);
     closeButtons.forEach(button => button.addEventListener('click', closeModal));
     window.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
 
-    // --- MANIPULADOR DE SUBMISSÃO (FINAL CORREÇÃO DE PAYLOAD) ---
+    // --- MANIPULADOR DE SUBMISSÃO (MANTIDO) ---
     commentForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         const descricao = document.getElementById('commentDescription').value;
@@ -436,7 +445,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Event Listener para Ações (Funcionalidade) ---
+    // --- Event Listener para Ações (Funcionalidade - MANTIDO) ---
     listaComentariosContainer.addEventListener('click', async (event) => {
         const target = event.target.closest('.action-btn'); 
         if (!target) return;

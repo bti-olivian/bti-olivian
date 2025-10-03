@@ -10,7 +10,7 @@
     <title>Configurações</title>
 
     <link rel="stylesheet" href="configuracoes.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
 </head>
 
 <body>
@@ -26,7 +26,8 @@
             <nav class="sidebar-nav">
                 <ul>
                     <li class="nav-item">
-                        <a href="/olivian-frontend/acervo_tecnico/acervo_tecnico.html"> <img src="../Imagens/acervo.png" alt="Ícone Acervo" class="nav-icon">
+                        <a href="/olivian-frontend/acervo_tecnico/acervo_tecnico.html"> <img src="../Imagens/acervo.png"
+                                alt="Ícone Acervo" class="nav-icon">
                             Acervo Técnico
                         </a>
                     </li>
@@ -72,7 +73,8 @@
             <div class="sidebar-footer">
                 <img src="../Imagens/bti_logo_colorido.png" alt="Logo BTI" class="footer-logo">
             </div>
-        </aside> <div class="sidebar-divider"></div>
+        </aside>
+        <div class="sidebar-divider"></div>
 
         <main class="content-area">
 
@@ -82,182 +84,212 @@
                 <h2>Configurações - Dados Empresariais</h2>
 
                 <div class="blocoDados">
-        <span class="tituloDados">Razão Social: </span>
-        <span id="empresa-razao-social">&nbsp;</span>
-    </div>
-    <div class="blocoDados">
-        <span class="tituloDados">CNPJ: </span>
-        <span id="empresa-cnpj">&nbsp;</span>
-    </div>
-    <div class="blocoDados_kit">
-        <span class="tituloDados">Endereço: </span>
-        <span id="empresa-endereco">&nbsp;</span>
-        <span class="tituloDados spaced-text">Bairro: </span>
-        <span id="empresa-bairro">&nbsp;</span>
-    </div>
-    <div class="blocoDados_kit">
-        <span class="tituloDados">Cidade: </span>
-        <span id="empresa-cidade">&nbsp;</span>
-        <span class="tituloDados spaced-text">Estado: </span>
-        <span id="empresa-estado">&nbsp;</span>
-    </div>
-    <div class="blocoDados_kit">
-        <span class="tituloDados">CEP: </span>
-        <span id="empresa-cep">&nbsp;</span>
-        <span class="tituloDados spaced-text">Telefone: </span>
-        <span id="empresa-telefone">&nbsp;</span>
-    </div>
-    <div class="blocoDados_kit">
-        <span class="tituloDados">Vigência Contratual</span>
-        <span class="tituloDados spaced-text">Início: </span>
-        <span id="empresa-vigencia-inicio">&nbsp;</span>
-        <span class="tituloDados spaced-text">Término: </span>
-        <span id="empresa-vigencia-fim">&nbsp;</span>
-    </div>
-                
-            
-            <div>
-                <div class="management-container">
-                <section class="management-section">
-                    <div class="management-header">
-                        <h3>Minhas Auditorias</h3>
-                        <button class="add-btn" id="add-auditoria-btn" title="Adicionar Auditoria">+</button>
+                    <span class="tituloDados">Razão Social: </span>
+                    <span id="empresa-razao-social">&nbsp;</span>
+                </div>
+                <div class="blocoDados">
+                    <span class="tituloDados">CNPJ: </span>
+                    <span id="empresa-cnpj">&nbsp;</span>
+                </div>
+                <div class="blocoDados_kit">
+                    <span class="tituloDados">Endereço: </span>
+                    <span id="empresa-endereco">&nbsp;</span>
+                    <span class="tituloDados spaced-text">Bairro: </span>
+                    <span id="empresa-bairro">&nbsp;</span>
+                </div>
+                <div class="blocoDados_kit">
+                    <span class="tituloDados">Cidade: </span>
+                    <span id="empresa-cidade">&nbsp;</span>
+                    <span class="tituloDados spaced-text">Estado: </span>
+                    <span id="empresa-estado">&nbsp;</span>
+                </div>
+                <div class="blocoDados_kit">
+                    <span class="tituloDados">CEP: </span>
+                    <span id="empresa-cep">&nbsp;</span>
+                    <span class="tituloDados spaced-text">Telefone: </span>
+                    <span id="empresa-telefone">&nbsp;</span>
+                </div>
+                <div class="blocoDados_kit">
+                    <span class="tituloDados">Vigência Contratual</span>
+                    <span class="tituloDados spaced-text">Início: </span>
+                    <span id="empresa-vigencia-inicio">&nbsp;</span>
+                    <span class="tituloDados spaced-text">Término: </span>
+                    <span id="empresa-vigencia-fim">&nbsp;</span>
+                </div>
+
+                <div>
+                    <div class="management-container">
+                        <section class="management-section">
+                            <div class="management-header">
+                                <h3>Minhas Auditorias</h3>
+                                <button class="add-btn" id="add-auditoria-btn" title="Adicionar Auditoria">+</button>
+                            </div>
+                            <div class="item-list" id="lista-auditorias">
+                            </div>
+                        </section>
+
+                        <section class="management-section">
+                            <div class="management-header">
+                                <h3>Minhas Certificações</h3>
+                                <button class="add-btn" id="add-certificacao-btn"
+                                    title="Adicionar Certificação">+</button>
+                            </div>
+                            <div class="item-list" id="lista-certificacoes">
+                            </div>
+                        </section>
+
+                        <section class="management-section">
+                            <div class="management-header">
+                                <h3>Meus Centros de Custos</h3>
+                                <button class="add-btn" id="add-centro-custo-btn"
+                                    title="Adicionar Centro de Custo">+</button>
+                            </div>
+                            <div class="item-list" id="lista-centros-de-custos">
+                            </div>
+                        </section>
                     </div>
-                    <div class="item-list" id="lista-auditorias">
+                </div>
+
+        </main>
+
+        <div id="modal-auditoria" class="modal-overlay">
+            <div class="modal-content-large">
+                <button class="close-button">&times;</button>
+                <div class="modal-grid">
+                    <div class="modal-col-form">
+                        <h2><span id="auditoria-form-title">Adicionar Nova</span> Auditoria</h2>
+                        <form id="auditoriaForm">
+                            <div class="form-group">
+                                <label for="nome_auditoria">Nome da Auditoria:</label>
+                                <input type="text" id="nome_auditoria" name="nome" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="descricao_auditoria">Descrição:</label>
+                                <textarea id="descricao_auditoria" name="descricao"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="data_auditoria">Data da Auditoria:</label>
+                                <input type="date" id="data_auditoria" name="data_auditoria" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="normas_auditoria">Acervo Técnico Relacionado:</label>
+                                <select id="normas_auditoria" name="normas" multiple></select>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="submit-btn save-new-btn">Salvar Auditoria</button>
+
+                                <div class="edit-mode-actions" style="display: none;">
+                                    <button type="submit" class="submit-btn save-edit-btn">Alterar</button>
+                                    <button type="button" class="submit-btn delete-item-btn red-btn">Excluir</button>
+                                    <button type="button" class="cancel-edit-btn">Cancelar</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-col-list">
+                        <h2>Auditorias Existentes</h2>
+                        <div id="lista-auditorias-popup" class="popup-item-list">
                         </div>
-                </section>
-
-                <section class="management-section">
-                    <div class="management-header">
-                        <h3>Minhas Certificações</h3>
-                        <button class="add-btn" id="add-certificacao-btn" title="Adicionar Certificação">+</button>
                     </div>
-                    <div class="item-list" id="lista-certificacoes">
-                        </div>
-                </section>
-
-                <section class="management-section">
-                    <div class="management-header">
-                        <h3>Meus Centros de Custos</h3>
-                        <button class="add-btn" id="add-centro-custo-btn" title="Adicionar Centro de Custo">+</button>
-                    </div>
-                    <div class="item-list" id="lista-centros-de-custos">
-                        </div>
-                </section>
-            </div>
-            </div>
-
-            </main>
-
-<div id="modal-auditoria" class="modal-overlay">
-    <div class="modal-content-large">
-        <button class="close-button">&times;</button>
-        <div class="modal-grid">
-            <div class="modal-col-list">
-                <h2>Auditorias Existentes</h2>
-                <div id="lista-auditorias-popup" class="popup-item-list">
-                    </div>
-            </div>
-            <div class="modal-col-form">
-                <h2>Adicionar Nova Auditoria</h2>
-                <form id="auditoriaForm">
-                    <div class="form-group">
-                        <label for="nome_auditoria">Nome da Auditoria:</label>
-                        <input type="text" id="nome_auditoria" name="nome" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="descricao_auditoria">Descrição:</label>
-                        <textarea id="descricao_auditoria" name="descricao"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="data_auditoria">Data da Auditoria:</label>
-                        <input type="date" id="data_auditoria" name="data_auditoria" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="normas_auditoria">Acervo Técnico Relacionado:</label>
-                        <select id="normas_auditoria" name="normas" multiple></select>
-                    </div>
-                    <button type="submit" class="submit-btn">Salvar Auditoria</button>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<div id="modal-certificacao" class="modal-overlay">
-    <div class="modal-content-large">
-        <button class="close-button">&times;</button>
-        <div class="modal-grid">
-            <div class="modal-col-list">
-                <h2>Certificações Existentes</h2>
-                <div id="lista-certificacoes-popup" class="popup-item-list">
+        <div id="modal-certificacao" class="modal-overlay">
+            <div class="modal-content-large">
+                <button class="close-button">&times;</button>
+                <div class="modal-grid">
+
+                    <div class="modal-col-form">
+                        <h2><span id="certificacao-form-title">Adicionar Nova</span> Certificação</h2>
+                        <form id="certificacaoForm">
+                            <div class="form-group">
+                                <label for="nome_certificacao">Nome da Certificação:</label>
+                                <input type="text" id="nome_certificacao" name="nome" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="descricao_certificacao">Descrição:</label>
+                                <textarea id="descricao_certificacao" name="descricao"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="data_inicio_certificacao">Data de Início:</label>
+                                <input type="date" id="data_inicio_certificacao" name="data_inicio" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="data_termino_certificacao">Data de Término:</label>
+                                <input type="date" id="data_termino_certificacao" name="data_termino" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="normas_certificacao">Acervo Técnico Relacionado:</label>
+                                <select id="normas_certificacao" name="normas" multiple></select>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="submit-btn save-new-btn">Salvar Certificação</button>
+
+                                <div class="edit-mode-actions" style="display: none;">
+                                    <button type="submit" class="submit-btn save-edit-btn">Alterar</button>
+                                    <button type="button" class="submit-btn delete-item-btn red-btn">Excluir</button>
+                                    <button type="button" class="cancel-edit-btn">Cancelar</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-            </div>
-            <div class="modal-col-form">
-                <h2>Adicionar Nova Certificação</h2>
-                <form id="certificacaoForm">
-                    <div class="form-group">
-                        <label for="nome_certificacao">Nome da Certificação:</label>
-                        <input type="text" id="nome_certificacao" name="nome" required>
+                    <div class="modal-col-list">
+                        <h2>Certificações Existentes</h2>
+                        <div id="lista-certificacoes-popup" class="popup-item-list">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="descricao_certificacao">Descrição:</label>
-                        <textarea id="descricao_certificacao" name="descricao"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="data_inicio_certificacao">Data de Início:</label>
-                        <input type="date" id="data_inicio_certificacao" name="data_inicio" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="data_termino_certificacao">Data de Término:</label>
-                        <input type="date" id="data_termino_certificacao" name="data_termino" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="normas_certificacao">Acervo Técnico Relacionado:</label>
-                        <select id="normas_certificacao" name="normas" multiple></select>
-                    </div>
-                    <button type="submit" class="submit-btn">Salvar Certificação</button>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<div id="modal-centro-custo" class="modal-overlay">
-    <div class="modal-content-large">
-        <button class="close-button">&times;</button>
-        <div class="modal-grid">
-            <div class="modal-col-list">
-                <h2>Centros de Custo Existentes</h2>
-                <div id="lista-centros-de-custos-popup" class="popup-item-list">
+        <div id="modal-centro-custo" class="modal-overlay">
+            <div class="modal-content-large">
+                <button class="close-button">&times;</button>
+                <div class="modal-grid">
+                    <div class="modal-col-form">
+                        <h2><span id="custo-form-title">Adicionar Novo</span> Centro de Custo</h2>
+                        <form id="centroCustoForm">
+                            <div class="form-group">
+                                <label for="nome_centro_custo">Nome do Centro de Custo:</label>
+                                <input type="text" id="nome_centro_custo" name="nome" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="descricao_centro_custo">Descrição:</label>
+                                <textarea id="descricao_centro_custo" name="descricao"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="normas_centro_custo">Acervo Técnico Relacionado:</label>
+                                <select id="normas_centro_custo" name="normas" multiple></select>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="submit-btn save-new-btn">Salvar Centro de Custo</button>
+
+                                <div class="edit-mode-actions" style="display: none;">
+                                    <button type="submit" class="submit-btn save-edit-btn">Alterar</button>
+                                    <button type="button" class="submit-btn delete-item-btn red-btn">Excluir</button>
+                                    <button type="button" class="cancel-edit-btn">Cancelar</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-            </div>
-            <div class="modal-col-form">
-                <h2>Adicionar Novo Centro de Custo</h2>
-                <form id="centroCustoForm">
-                    <div class="form-group">
-                        <label for="nome_centro_custo">Nome do Centro de Custo:</label>
-                        <input type="text" id="nome_centro_custo" name="nome" required>
+                    <div class="modal-col-list">
+                        <h2>Centros de Custo Existentes</h2>
+                        <div id="lista-centros-de-custos-popup" class="popup-item-list">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="descricao_centro_custo">Descrição:</label>
-                        <textarea id="descricao_centro_custo" name="descricao"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="normas_centro_custo">Acervo Técnico Relacionado:</label>
-                        <select id="normas_centro_custo" name="normas" multiple></select>
-                    </div>
-                    <button type="submit" class="submit-btn">Salvar Centro de Custo</button>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-    <script src="../shared/utils.js"></script>
-    <script src="../shared/header.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-    <script src="configuracoes.js"></script>
+        <script src="../shared/utils.js"></script>
+        <script src="../shared/header.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+        <script src="configuracoes.js"></script>
 
 </body>
+
 </html>

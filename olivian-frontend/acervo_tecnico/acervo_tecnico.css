@@ -520,7 +520,7 @@ background: none;
 border: none; 
 cursor: pointer; 
 padding: 5px;
-line-height: 1;
+line-height: 0;
 }
 .close-button:hover { color: #333; transform: rotate(90deg); transition: transform 0.3s; }
 .modal-content-large h2 { 
@@ -637,7 +637,11 @@ background-color: #ffffff; /* Fundo branco para a thread */
 display: flex;
 flex-direction: column;
 position: relative;
-border-left: 2px solid #e0e0e0;
+/* Zera estilos de background de linha, se houver */
+    background-image: none;
+/* background-size: 2px 100%;  Largura da linha */
+/*background-position: calc(var(--comment-reply-margin, 60px) / 2) 0; /* Posição X da linha */
+padding-left: 10px; /* Garante que o conteúdo PAI não cubra a linha */
 }
 
 /* 🎯 CORREÇÃO 2.1: A BOLHA CINZA E SUAS LINHAS DE CONEXÃO */
@@ -648,41 +652,70 @@ border-radius: 10px;
 background-color: #f0f2f5; 
 position: relative;
 z-index: 5; 
-max-width: 98%; /* 🎯 Aumentado para preencher o bloco */
-min-width: 250px;
+
+/* CRÍTICO: Força a largura total do contêiner PAI */
+margin-right: 0;
+width: 100%; 
+max-width: 100%;
+min-width: 0; 
 margin-top: 5px; 
+    
+border-left: none; 
+border-radius: 10px;
+box-sizing: border-box; 
 }
 
 /* 2.1. Regra para COMENTÁRIOS FILHOS (RESPOSTAS) - Cria a linha VERTICAL à esquerda */
 .comentario-item[data-parent-id]:not([data-parent-id="null"]) { 
-margin-top: 5px !important; 
-margin-bottom: 0px !important; 
-margin-left: 0 !important;
-border-left: none; /* Linha vertical do filho */
-border-radius: 10px;
-padding-left: 12px;
-/* AJUSTE AQUI: Reduz o max-width para comentários filhos */
-max-width: calc(98% - var(--comment-reply-margin, 60px)); /* Reduz a largura considerando o recuo */
-/* Se você quer um min-width menor para filhos, defina aqui: */
-min-width: 150px; /* Exemplo: define um mínimo menor para filhos */ 
+    margin-top: 5px !important; 
+    margin-bottom: 0px !important; 
+      
+    /* 1. LINHA VERTICAL: Cria a linha no lado do recuo. */
+    border-radius: 0 10px 10px 0; 
+    box-sizing: border-box; 
+}
+
+.comentario-item[data-parent-id]:not([data-parent-id="null"])::after {
+    content: '';
+    position: absolute;
+    /* Posição da linha vertical. Deve ser o valor do paddingValue/2 */
+    left: calc(var(--comment-reply-margin, 40px) / 2 * -1); 
+    top: -30px;
+    bottom: 28px; /* Estica até a base do item */
+    width: 2px;
+    background-color: #ccd0d5;
+    z-index: 1;
 }
 
 /* 2.2. LINHA HORIZONTAL (Quebra) no filho - Tampa a linha vertical para formar o "T" */
 .comentario-item[data-parent-id]:not([data-parent-id="null"])::before {
-content: '';
-position: absolute;
-top: 18px; 
-left: -2px; /* Inicia antes da borda esquerda (linha vertical) */
-width: 15px; 
-height: 2px;
-background-color: #f0f2f5; /* Cor da bolha para cobrir a linha */
-z-index: 6; 
+    content: '';
+    position: absolute;
+    top: 18px; 
+    left: calc(var(--comment-reply-margin, 40px) / 2 * -1); 
+    width: 20px; /* Largura do braço horizontal */
+    height: 2px;
+    background-color: #ccd0d5; 
+    z-index: 7; 
 }
 
-/* 2.3. Linha vertical do PAI para o primeiro FILHO (Apenas o item logo após o PAI precisa da borda) */
-.thread-container > .comentario-item:first-child + .comentario-item[data-parent-id]:not([data-parent-id="null"]) {
-border-left: none; 
+/* 🎯 Oculta a linha vertical no ÚLTIMO item Filho/Neto (para não continuar a linha) */
+.comentario-item[data-parent-id]:not([data-parent-id="null"]):last-of-type::after {
+    /* Força a linha a parar bem antes da base do último elemento da thread */
+    bottom: 30px; 
+    height: auto;
+    top: -20px; 
 }
+
+/* 🎯 Ajuste para a BOLHA PAI (Comentário de nível 0) */
+.thread-container > .comentario-item:first-child {
+/* O PAI não tem recuo, então margin-left é 0 e padding-left é o padrão */
+margin-left: 0 !important;
+padding-left: 12px !important; 
+border-left: none !important;
+width: 100%; /* Ocupa a largura máxima disponível para o PAI */
+}
+
 
 /* ======================================================= */
 /* 2. TIPOGRAFIA E METADADOS (VISUAL NOVO) */
@@ -741,22 +774,44 @@ margin-left: auto;
 
 /* 🎯 CORREÇÃO 1: Ações (Responder/Editar/Excluir) - Restaura Cores e Alinhamento */
 .comentario-actions {
-text-align: right; 
+text-align: right; /* Alinha botões à direita */
 margin-top: 0px; 
-margin-left: 20px; /* Alinhado com a borda esquerda da bolha PAI + padding do thread */
 padding-bottom: 5px; 
 position: relative; 
 z-index: 10;
+width: 100%;
 }
 
 .thread-container > .comentario-actions:first-of-type {
-margin-left: 20px; /* Alinhado sob a bolha PAI */
+/* CRÍTICO 2: O PAI não tem margem, mas precisa do padding do texto */
+margin-left: 0; 
+padding-left: 0 !important; 
+width: 100%; 
+}
+
+/* 🎯 CORREÇÃO 2: Ações em Comentário PAI (Alinhamento dos Botões) */
+.thread-container > .comentario-actions[style*="width: 98%"] {
+    /* Força o alinhamento do bloco de ações PAI. */
+    margin-left: 0 !important; 
+    padding-left: 0px !important; 
+    width: 100% !important;
+    text-align: right !important;
+}
+
+/* 🎯 Ações em Comentários Filhos - Aplica Recuo e Alinhamento à Direita */
+.comentario-actions[style*="--comment-reply-margin"] { 
+    /* Aplica Recuo e Largura da forma mais precisa possível */
+    margin-left: var(--comment-reply-margin) !important; 
+    width: calc(99% - var(--comment-reply-margin)) !important;
+    text-align: right !important;
+    padding-left: 0 !important;
 }
 
 /* Ações em Comentários Filhos - Usando a variável CSS do JS para sincronizar recuo */
 .comentario-item[data-parent-id]:not([data-parent-id="null"]) + .comentario-actions {
-    /* Usa a variável --comment-reply-margin (definida no JS) */
-    margin-left: var(--comment-reply-margin); 
+/* O margin-left usa a variável do JS (paddingValue) - 10px (offset) */
+    margin-left: calc(var(--comment-reply-margin) - 10px); 
+    margin-top: 5px; /* Adiciona espaço vertical */
 }
 
 /* Estilo dos Botões de Ação */
@@ -796,16 +851,17 @@ stroke-width: 2.5;
 stroke: currentColor;
 }
 
-/* REGRAS DE SOBRESCRITA (MANUTENÇÃO DE CLASSES ORIGINAIS) */
-/* As margens negativas foram ajustadas para não interferir no fluxo do layout. */
-.comentario-item {
-margin-top: 0 !important;
-margin-bottom: 0 !important;
-}
-
 /* A caixa estática de exemplo no HTML precisa ser ignorada, se ainda existir */
 .comentario-item:last-of-type:not([data-thread-id]) {
 display: none !important;
+}
+
+/* 🎯 CORREÇÃO 1: Anula Recuo no Comentário PAI (Nível 0) */
+/* Usa o seletor de atributo do JS para forçar o alinhamento total */
+.comentario-item[style*="margin-left: 0"] {
+    /* O JS injeta margin-left: 0 !important; aqui. */
+    /* Apenas garantimos que ele não tenha borda extra. */
+    border-left: none !important;
 }
 
 /* ... (restante dos estilos externos MANTIDOS) ... */

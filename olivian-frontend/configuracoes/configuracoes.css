@@ -551,3 +551,95 @@ h3 {
     font-size: 0.9em;     /* Deixa a fonte da norma um pouco menor que o título */
     color: #555;          /* Um cinza escuro para a fonte */
 }
+
+
+/* ========================================================================= */
+/* ESTILOS PARA POPUPS - MODO EDIÇÃO/NOVO E BOTÕES DE AÇÃO                   */
+/* ========================================================================= */
+
+/* 1. ESTILO DO BOTÃO PRINCIPAL (Salvar/Alterar) - Fundo Roxo */
+.submit-btn {
+    /* Cor roxa de fundo similar ao desejado, usando uma variação do --primary-color */
+    background-color: #9C27B0; /* Roxo */
+    color: white;
+    border: none;
+    border-radius: 8px; /* Cantos arredondados */
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-transform: uppercase;
+    font-weight: bold;
+    /* Removido o margin-top, pois será controlado pelo .form-actions */
+}
+
+.submit-btn:hover {
+    background-color: #8A249C; /* Roxo mais escuro ao passar o mouse */
+}
+
+/* 2. ESTILO DO BOTÃO DE EXCLUIR (Vermelho) */
+.submit-btn.red-btn {
+    background-color: #D32F2F; /* Vermelho escuro para Excluir */
+}
+
+.submit-btn.red-btn:hover {
+    background-color: #C62828; /* Vermelho mais escuro ao passar o mouse */
+}
+
+/* 3. ESTILO DO BOTÃO CANCELAR (Secundário/Claro) */
+.cancel-edit-btn {
+    background: none;
+    border: 1px solid #ccc;
+    color: #555;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.cancel-edit-btn:hover {
+    background-color: #f0f0f0;
+}
+
+
+/* 4. LAYOUT DOS BOTÕES DENTRO DO FORMULÁRIO */
+
+/* Container que agrupa todos os botões no final do formulário */
+.form-actions {
+    /* Garante que os botões tenham espaço abaixo dos últimos campos */
+    margin-top: 25px; 
+}
+
+/* Container que contém os botões Alterar, Excluir e Cancelar (Modo Edição) */
+.edit-mode-actions {
+    display: flex;
+    gap: 10px; 
+    align-items: center;
+    /* Removido o margin-top para ficar em linha com o .form-actions */
+}
+
+/* Oculta o botão Salvar Novo quando o modo Edição está ativo (lógica é controlada pelo JS) */
+.edit-mode-actions + .submit-btn.save-new-btn {
+    display: block; /* Garante que o botão novo apareça por padrão se .edit-mode-actions estiver oculto */
+}
+
+/* Ajuste fino na lista de itens para suportar clique */
+.list-item {
+    cursor: pointer; /* Indica que o item é clicável */
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Visual ao passar o mouse */
+.list-item:hover {
+    background-color: #f8f8f8;
+    border-color: #ccc;
+}
+
+/* Visual quando o item está selecionado (Modo Edição Ativo) */
+.list-item.selected {
+    background-color: #f0f8ff; /* Fundo azul claro para indicar seleção */
+    border-color: #9C27B0; /* Borda roxa para combinar com o tema */
+    box-shadow: 0 0 5px rgba(156, 39, 176, 0.2);
+}
